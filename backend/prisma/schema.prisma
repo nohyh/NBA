@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// 1. 用户表：支持个性化首页
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String   // 存哈希后的密码
+  createdAt DateTime @default(now())
+
+  // 个性化设置：关联到具体的球队和球员
+  favoriteTeamId   Int?
+  favoriteTeam     Team?   @relation(fields: [favoriteTeamId], references: [id])
+  favoritePlayerId Int?
+  favoritePlayer   Player? @relation(fields: [favoritePlayerId], references: [id])
+}
+
+// 2. 球队表：基础信息
+model Team {
+  id           Int     @id @default(autoincrement())
+  nbaId        Int     @unique // NBA官方API的ID
+  name         String  // 例如: Lakers
+  fullName     String  // 例如: Los Angeles Lakers
+  abbreviation String  // 例如: LAL
+  conference   String  // West / East
+  division     String? // 分区
+  logoUrl      String? // 球队Logo链接
+
+  // 战绩 (每日更新)
+  wins    Int   @default(0)
+  losses  Int   @default(0)
+  winRate Float @default(0.0)
+  rank    Int   @default(0) // 分区排名
+
+  players Player[] // 包含的球员
+  fans    User[]   // 关注这只球队的用户
+}
+
+// 3. 球员表：核心资产
+model Player {
+  id        Int    @id @default(autoincrement())
+  nbaId     Int    @unique // NBA官方API的ID
+  firstName String
+  lastName  String
+  fullName  String
+
+  // 静态数据
+  height      String?
+  weight      String?
+  country     String?
+  jersey      String?
+  position    String?
+  headshotUrl String? // 球员高清大头照链接
+
+  // 关系
+  teamId Int?
+  team   Team? @relation(fields: [teamId], references: [id])
+  fans   User[] // 关注这个球员的用户
+
+  // 数据关联
+  seasonStats PlayerSeasonStat[]
+  gameLogs    PlayerGameLog[]
+}
+
+// 4. 球员赛季平均数据 (用于排行榜)
+model PlayerSeasonStat {
+  id       Int    @id @default(autoincrement())
+  playerId Int
+  player   Player @relation(fields: [playerId], references: [id])
+  season   String // 例如: "2024-25"
+
+  gamesPlayed Int
+  pts         Float // 场均得分
+  reb         Float // 场均篮板
+  ast         Float // 场均助攻
+  stl         Float // 场均抢断
+  blk         Float // 场均盖帽
+  fgPct       Float // 命中率
+  tppPct      Float // 三分命中率 (Three Point Percentage)
+  ftPct       Float // 罚球命中率
+
+  updatedAt DateTime @updatedAt
+}
+
+// 5. 球员单场数据 (用于图表走势分析)
+model PlayerGameLog {
+  id       Int      @id @default(autoincrement())
+  playerId Int
+  player   Player   @relation(fields: [playerId], references: [id])
+  gameId   String   // 比赛ID
+  gameDate DateTime
+  matchup  String   // 例如: "LAL vs GSW"
+  wl       String   // W or L
+
+  pts Int
+  reb Int
+  ast Int
+  stl Int
+  blk Int
+
+  @@index([playerId, gameDate]) // 加索引以加快查询速度
+}

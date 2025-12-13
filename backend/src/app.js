@@ -1,0 +1,16 @@
+const express =require('express')
+const cors =require('cors')
+const app = express();
+const authMiddleware = require('./middleware/auth');
+app.use(cors());
+app.use(express.json());
+
+const teamRoutes = require('./routes/teamRoutes');
+const playerRoutes =require('./routes/playerRoutes');
+const statsRoutes =require('./routes/statsRoutes');
+const userRoutes =require('./routes/userRoutes');
+app.use('/api',teamRoutes);
+app.use('/api',playerRoutes);
+app.use('/api',statsRoutes);
+app.use('/api',userRoutes);
+module.exports = app;
