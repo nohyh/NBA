@@ -37,8 +37,10 @@ model Team {
   winRate Float @default(0.0)
   rank    Int   @default(0) // 分区排名
 
-  players Player[] // 包含的球员
-  fans    User[]   // 关注这只球队的用户
+  players   Player[] // 包含的球员
+  fans      User[]   // 关注这只球队的用户
+  homeGames Game[]   @relation("HomeGames") // 作为主队的比赛
+  awayGames Game[]   @relation("AwayGames") // 作为客队的比赛
 }
 
 // 3. 球员表：核心资产
@@ -104,4 +106,27 @@ model PlayerGameLog {
   blk Int
 
   @@index([playerId, gameDate]) // 加索引以加快查询速度
+}
+
+// 6. 比赛表：存储赛程和比分
+model Game {
+  id         Int      @id @default(autoincrement())
+  gameId     String   @unique // NBA官方的比赛ID
+  gameDate   DateTime // 比赛日期 (只存日期部分)
+  gameTime   String?  // 比赛开始时间 (如 "7:30 PM ET")
+  status     String   // "Scheduled" | "In Progress" | "Final"
+  
+  // 主队信息
+  homeTeamId    Int
+  homeTeam      Team   @relation("HomeGames", fields: [homeTeamId], references: [id])
+  homeTeamScore Int?   // 主队得分 (比赛结束后才有)
+  
+  // 客队信息
+  awayTeamId    Int
+  awayTeam      Team   @relation("AwayGames", fields: [awayTeamId], references: [id])
+  awayTeamScore Int?   // 客队得分 (比赛结束后才有)
+  
+  updatedAt  DateTime @updatedAt
+  
+  @@index([gameDate]) // 按日期查询优化
 }

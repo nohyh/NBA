@@ -1,12 +1,12 @@
 // components/app-sidebar.tsx
-import { Calendar, Home, Inbox, Search, Settings, Trophy ,BarChart3,User} from "lucide-react"
+import { Calendar, Home, Inbox, Search, Settings, Trophy ,BarChart3,User} from "lucide-react";
+import { Link } from "react-router-dom"
 
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -44,10 +44,10 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild className="py-7">
-                    <a href={item.url} className="text-xl">
+                    <Link to={item.url} className="text-xl">
                       <item.icon  className="!w-6 !h-6"/>
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

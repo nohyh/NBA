@@ -9,6 +9,9 @@ const authMiddleware = async(req,res,next)=>{
         }
         const token =authHeader.split(" ")[1];
         const decoded =verifyToken(token);
+        if(!decoded){
+            return res.status(401).json({message:"Unauthorized"});
+        }
        const user =await prisma.user.findUnique({
         where:{
             id:decoded.id

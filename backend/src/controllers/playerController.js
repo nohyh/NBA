@@ -25,19 +25,19 @@ const getPlayers =async(req,res)=>{
         return res.status(500).json({message:error.message});
     }
 }
-const getPlayersById =async(req,res)=>{
+const getPlayerById =async(req,res)=>{
     try{
-        const players  =await prisma.player.findUnique({
+        const player  =await prisma.player.findUnique({
             where:{id:parseInt(req.params.id)},
             include:{
                 seasonStats:true,
                 team:true
             }
         })
-        if(!players){
+        if(!player){
             return res.status(404).json({message:"No player found"});
         }
-        return res.status(200).json({players});
+        return res.status(200).json({player});
     }
     catch(error){
         console.log(error);
@@ -47,4 +47,4 @@ const getPlayersById =async(req,res)=>{
 
 
 
-module.exports ={getPlayers,getPlayersById}
+module.exports ={getPlayers ,getPlayerById}

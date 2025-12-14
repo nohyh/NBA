@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card"
-import { useTodaysMatch } from "../hooks/useMatch"
+import { useGameByDate} from "../hooks/useGame"
+import {getETDate} from "../utils/date"
 import {
   Carousel,
   CarouselContent,
@@ -8,52 +9,33 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel"
 const Home = () => {
-  const { data: TodaysMatch } = useTodaysMatch()
+
+  const {data,isLoading,error} = useGameByDate(getETDate())
+  const TodaysGame = data?.games
   return (
     <div>
       <Carousel
         opts={{
           align: "start",
         }}
-        className="w-full max-w-sm"
+        className="w-full max-w-5xl mx-auto"
       >
         <CarouselContent>
-          {Array.from({ length: 5 }).map((_, index) => (
-            <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+          {TodaysGame && TodaysGame.map((game) => (
+            <CarouselItem key={game.id} className="flex-none w-48">
               <div className="p-1">
-                <Card>
-                  <CardContent className="flex aspect-square items-center justify-center p-6">
-                    <span className="text-3xl font-semibold">{index + 1}</span>
+                <Card >
+                  <CardContent className="flex  items-center justify-center p-6">
+                    <span className="text-xs font-semibold mr-5"  >{game.homeTeam.abbreviation}</span>
+                    <span className="text-xs font-semibold ml-5">{game.awayTeam.abbreviation}</span>
                   </CardContent>
                 </Card>
               </div>
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
-      </Carousel>
-      <Carousel
-        opts={{
-          align: "start",
-        }}
-        className="w-full max-w-sm"
-      >
-        <CarouselContent>
-          {TodaysMatch && TodaysMatch.map((match) => (
-            <CarouselItem key={match.id}>
-              <div className="p-1">
-                <Card>
-                  <CardContent className="flex aspect-square items-center justify-center p-6">
-                    <span className="text-3xl font-semibold">{match.id}</span>
-                  </CardContent>
-                </Card>
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
+        <CarouselPrevious className="left-4" />
+        <CarouselNext className="right-4" />
       </Carousel>
     </div>
 
