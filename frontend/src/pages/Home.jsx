@@ -1,14 +1,22 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { useGameByDate} from "../hooks/useGame"
+import {useTopTeam} from "../hooks/useTeam"
 import {getETDate} from "../utils/date"
 import GameCarousel from "../components/GameCarousel"
+import MiniTeamRanking from "../components/MiniTeamRanking"
 const Home = () => {
-
-  const {data,isLoading,error} = useGameByDate(getETDate())
-  const TodaysGame = data?.games
+  const {data} = useGameByDate(getETDate())
+   const TodaysGame = data?.games
+  const {data:topTeam} = useTopTeam(3)
+  //三个队伍用于展示
   return (
     <div>
       <GameCarousel games={TodaysGame} />
+      <div className="flex gap-4 p-4">
+        <div className="w-1/4 ml-auto"> 
+          <MiniTeamRanking teams={topTeam}/>
+        </div>
+      </div>
     </div>
 
   )

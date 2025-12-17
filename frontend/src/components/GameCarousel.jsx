@@ -19,7 +19,7 @@ return(
       >
         <CarouselContent>
           {games && games.map((game) => (
-            <CarouselItem key={game.id} className="flex-none w-72">
+            <CarouselItem key={game.id} className="flex-none w-80">
               <div className="p-1">
                 <GameCard game={game} />
               </div>

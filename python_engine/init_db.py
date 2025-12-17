@@ -17,7 +17,7 @@ print(f"已连接到数据库: {db_path}")
 print("正在从 NBA API 获取球队战绩数据...")
 try:
     # 获取2024-25赛季的数据
-    standings = leaguestandings.LeagueStandings(season='2024-25')
+    standings = leaguestandings.LeagueStandings(season='2025-26')
     teams_data = standings.get_dict()['resultSets'][0]['rowSet']
 
     # 这里的索引是根据 API 返回结果确定的，通常:

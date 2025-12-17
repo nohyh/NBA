@@ -76,15 +76,35 @@ model PlayerSeasonStat {
   player   Player @relation(fields: [playerId], references: [id])
   season   String // 例如: "2024-25"
 
-  gamesPlayed Int
-  pts         Float // 场均得分
-  reb         Float // 场均篮板
-  ast         Float // 场均助攻
-  stl         Float // 场均抢断
-  blk         Float // 场均盖帽
-  fgPct       Float // 命中率
-  tppPct      Float // 三分命中率 (Three Point Percentage)
-  ftPct       Float // 罚球命中率
+  gamesPlayed Int      // GP - 出场次数
+  min         Float?   // MIN - 场均上场时间
+  pts         Float    // PTS - 场均得分
+  reb         Float    // REB - 场均篮板
+  ast         Float    // AST - 场均助攻
+  stl         Float    // STL - 场均抢断
+  blk         Float    // BLK - 场均盖帽
+  tov         Float?   // TOV - 场均失误
+  pf          Float?   // PF - 场均犯规
+  
+  // 投篮数据
+  fgm         Float?   // FGM - 场均投篮命中
+  fga         Float?   // FGA - 场均投篮出手
+  fgPct       Float    // FG_PCT - 投篮命中率
+  fg3m        Float?   // FG3M - 场均三分命中
+  fg3a        Float?   // FG3A - 场均三分出手
+  tppPct      Float    // FG3_PCT - 三分命中率
+  ftm         Float?   // FTM - 场均罚球命中
+  fta         Float?   // FTA - 场均罚球出手
+  ftPct       Float    // FT_PCT - 罚球命中率
+  
+  // 篮板细分
+  oreb        Float?   // OREB - 场均进攻篮板
+  dreb        Float?   // DREB - 场均防守篮板
+  
+  // 高级数据
+  eff         Float?   // EFF - 效率值
+  astTov      Float?   // AST_TOV - 助攻失误比
+  stlTov      Float?   // STL_TOV - 抢断失误比
 
   updatedAt DateTime @updatedAt
 }

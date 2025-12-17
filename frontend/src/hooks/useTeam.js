@@ -14,4 +14,10 @@ const useTeamById =(id)=>{
         queryFn:()=>teamServices.getTeamById(id).then(res=>res.data)
     })
 }
-export {useTeams,useTeamById};
+const useTopTeam=(limit)=>{
+    return useQuery({
+        queryKey:['topTeam',limit],
+        queryFn:()=>teamServices.getTopTeam(limit).then(res=>res.data)
+    })
+}
+export {useTeams,useTeamById,useTopTeam};
