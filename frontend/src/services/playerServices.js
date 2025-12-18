@@ -15,8 +15,14 @@ const getPlayerById =async(id)=>{
     return response.data;
 }
 
+const getMvpOfToday =async()=>{
+    const response =await apiClient.get("/players/mvpOfToday");
+    return response.data;
+}
+
 export default {
     getLeaders,
     getPlayers,
-    getPlayerById
+    getPlayerById,
+    getMvpOfToday
 }

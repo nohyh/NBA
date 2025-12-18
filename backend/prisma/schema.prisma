@@ -109,7 +109,7 @@ model PlayerSeasonStat {
   updatedAt DateTime @updatedAt
 }
 
-// 5. 球员单场数据 (用于图表走势分析)
+// 5. 球员单场数据 (用于图表走势分析和今日MVP)
 model PlayerGameLog {
   id       Int      @id @default(autoincrement())
   playerId Int
@@ -119,13 +119,15 @@ model PlayerGameLog {
   matchup  String   // 例如: "LAL vs GSW"
   wl       String   // W or L
 
+  min Int?   // 上场时间（分钟）
   pts Int
   reb Int
   ast Int
   stl Int
   blk Int
+  tov Int?   // 失误
 
-  @@index([playerId, gameDate]) // 加索引以加快查询速度
+  @@index([playerId, gameDate])
 }
 
 // 6. 比赛表：存储赛程和比分

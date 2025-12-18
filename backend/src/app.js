@@ -7,12 +7,10 @@ app.use(express.json());
 
 const teamRoutes = require('./routes/teamRoutes');
 const playerRoutes =require('./routes/playerRoutes');
-const statsRoutes =require('./routes/statsRoutes');
 const userRoutes =require('./routes/userRoutes');
 const gameRoutes =require('./routes/gameRoutes');
 app.use('/api',teamRoutes);
 app.use('/api',playerRoutes);
-app.use('/api',statsRoutes);
 app.use('/api',userRoutes);
 app.use('/api',gameRoutes);
 module.exports = app;

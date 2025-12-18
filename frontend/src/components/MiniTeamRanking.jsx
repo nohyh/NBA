@@ -25,7 +25,7 @@ const MiniTeamRanking = ({teams})=>{
                 <div className="flex flex-col  items-center">
                     <h3 className="font-bold">WEST</h3>
                     <div>
-                        {west.map((team)=>(
+                        {west.map((team)=>( 
                             <div key={team.id} className="flex items-center">
                                 <img src={team.logoUrl} alt={team.name} className="w-10 h-10" />
                                 <span className="mr-2">{team.name}</span>
