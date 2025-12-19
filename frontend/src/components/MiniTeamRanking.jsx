@@ -1,4 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card"
 import {Link} from "react-router-dom"
 const MiniTeamRanking = ({teams})=>{
     if(!teams){
@@ -6,8 +5,8 @@ const MiniTeamRanking = ({teams})=>{
     }
     const {east,west} = teams
     return(
-        <Card className="w-full bg-blue-50/70 backdrop-blur-sm" >
-            <CardContent >
+        <div className="w-full rounded-2xl bg-white shadow-lg" >
+            <div >
                 <div className="flex justify-around ">
                 <div className="flex flex-col  items-center">
                     <h3 className="font-bold">EAST</h3>
@@ -40,8 +39,8 @@ const MiniTeamRanking = ({teams})=>{
                             View All
                         </Link>
                 </div>
-            </CardContent>
-        </Card>
+            </div>
+        </div>
     )
 } 
 export default MiniTeamRanking

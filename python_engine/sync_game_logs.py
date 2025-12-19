@@ -153,5 +153,15 @@ def sync_today_game_logs():
     return all_finished, game_date
 
 if __name__ == '__main__':
-    sync_today_game_logs()
+    import json
+    all_finished, game_date = sync_today_game_logs()
+    
+    # 保存 NBA 日期到 JSON 文件供 Node.js 读取
+    if game_date:
+        date_file = os.path.join(os.path.dirname(__file__), '../backend/data/nba_date.json')
+        with open(date_file, 'w') as f:
+            json.dump({'date': game_date, 'allFinished': all_finished}, f)
+        print(f"✅ NBA 日期已保存到: {date_file}")
+    
     conn.close()
+

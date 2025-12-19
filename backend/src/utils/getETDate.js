@@ -1,16 +1,23 @@
 /**
- * 获取美国东部时间的日期
- * @returns {Date} 美东时间的今天日期（时间为 00:00:00）
+ * 获取 NBA 比赛日期
+ * 从 Python 同步脚本保存的 JSON 文件读取
  */
-const getETDate = () => {
-    const now = new Date();
-    // NBA 的"比赛日"通常比实际日期晚一点
-    // 用更大的偏移确保匹配 NBA API 的日期
-    now.setHours(now.getHours() - 15);
+const fs = require('fs');
+const path = require('path');
 
-    // 返回只有日期部分的 Date 对象
-    const dateStr = now.toISOString().split('T')[0];
-    return new Date(dateStr + 'T00:00:00.000Z');
+const getETDate = () => {
+    try {
+        const dateFile = path.join(__dirname, '../../data/nba_date.json');
+        const data = JSON.parse(fs.readFileSync(dateFile, 'utf-8'));
+        return new Date(data.date + 'T00:00:00Z');
+    } catch (error) {
+        // 如果文件不存在，使用备用计算方法
+        console.warn('无法读取 NBA 日期文件，使用备用计算');
+        const now = new Date();
+        now.setHours(now.getHours() - 15);
+        const dateStr = now.toISOString().split('T')[0];
+        return new Date(dateStr + 'T00:00:00');
+    }
 };
 
 module.exports = getETDate;
