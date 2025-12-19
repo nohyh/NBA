@@ -1,8 +1,10 @@
 const { PrismaClient } = require("@prisma/client");
 const { PrismaBetterSqlite3 } = require("@prisma/adapter-better-sqlite3");
+const path = require("path");
 
-// 使用 url 配置（官方 Prisma 7 推荐方式）
-const adapter = new PrismaBetterSqlite3({ url: "file:./prisma/dev.db" });
+// 使用绝对路径确保正确定位数据库
+const dbPath = path.resolve(__dirname, "../../prisma/dev.db");
+const adapter = new PrismaBetterSqlite3({ url: `file:${dbPath}` });
 const prisma = new PrismaClient({ adapter });
 
 module.exports = prisma;
