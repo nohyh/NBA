@@ -12,27 +12,27 @@ const Home = () => {
   const {data} = useGameByDate(getETDate())
    const TodaysGame = data?.games
   const {data:topTeam} = useTopTeam(3)
-  //三个队伍用于展示
   return (
-    <div>
-      <GameCarousel games={TodaysGame} />
-      <div className="flex gap-4 p-4">
-        <div className="flex w-1/4 mr-auto gap-y-2">
-          <MvpCard/>
+  <div>
+    <GameCarousel games={TodaysGame} />
+    <div className="flex gap-4 p-4">
+      <div className="flex flex-col w-3/4 gap-4">
+        <div className="flex gap-4">
+          <div className="w-1/3">
+            <MvpCard/>
+          </div>
+          <div className="w-2/3">
+            <NewsCarousel/>
+          </div>
         </div>
-        <div className="flex w-1/2 gap-y-2">
-          <NewsCarousel/>
-        </div>
-        <div className=" flex flex-col w-1/4 ml-auto gap-y-2"> 
-          <MiniTeamRanking teams={topTeam}/>
-           <MiniPlayerRanking/>
-        </div>
+        <News/>
       </div>
-      <div className="flex w-3/4 mr-auto gap-y-2">
-          <News/>
-        </div>
+      <div className="flex flex-col w-1/4 gap-2">
+        <MiniTeamRanking teams={topTeam}/>
+        <MiniPlayerRanking/>
+      </div>
     </div>
-
-  )
+  </div>
+)
 }
 export default Home
