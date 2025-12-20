@@ -1,9 +1,11 @@
 import {Link} from "react-router-dom"
-const MiniTeamRanking = ({teams})=>{
-    if(!teams){
+import {useTopTeam} from "../hooks/useTeam"
+const MiniTeamRanking = ()=>{
+    const { data: { teams: east=[] } = {} } = useTopTeam('east',3);
+    const { data: { teams: west=[] } = {} } = useTopTeam('west',3);
+    if(!east || !west){
         return null
     }
-    const {east,west} = teams
     return(
         <div className="w-full rounded-2xl bg-white shadow-lg" >
             <div >

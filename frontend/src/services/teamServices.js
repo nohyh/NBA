@@ -7,11 +7,14 @@ const getTeamById =(id)=>{
     return apiClient.get(`/teams/${id}`);
 }
 
-const getTopTeam =(limit=1)=>{
-    if(!limit||limit<1||limit>15){
-        limit=15;
+const getTopTeam =(limit,type)=>{
+    if(!type){
+        return null;
     }
-    return apiClient.get(`/teams/top?limit=${limit}`);
+    if(!limit){
+        return apiClient.get(`/teams/top?type=${type}`);
+    }
+    return apiClient.get(`/teams/top?limit=${limit}&type=${type}`);
 }
 
 export default {

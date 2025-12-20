@@ -11,7 +11,6 @@ import News from "../components/News"
 const Home = () => {
   const {data} = useGameByDate(getETDate())
    const TodaysGame = data?.games
-  const {data:topTeam} = useTopTeam(3)
   return (
   <div>
     <GameCarousel games={TodaysGame} />
@@ -28,7 +27,7 @@ const Home = () => {
         <News/>
       </div>
       <div className="flex flex-col w-1/4 gap-2">
-        <MiniTeamRanking teams={topTeam}/>
+        <MiniTeamRanking/>
         <MiniPlayerRanking/>
       </div>
     </div>
