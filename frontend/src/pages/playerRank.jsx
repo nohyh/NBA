@@ -1,7 +1,7 @@
 const PlayerRank =()=>{
     return(
         <div>
-            playerRank
+           
         </div>
     )
 }

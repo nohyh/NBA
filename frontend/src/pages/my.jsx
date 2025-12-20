@@ -1,7 +1,6 @@
 const My =()=>{
     return(
-        <div>
-            my
+        <div className="flex" >
         </div>
     )
 }

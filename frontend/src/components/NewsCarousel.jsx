@@ -12,10 +12,12 @@ const NewsCarousel = () => {
             <CarouselContent>
                 {news&&news.map((item) =>(
                     <CarouselItem key={item.id} className={' relative h-[400px]'}>
+                    <a href={item.url} target="_blank" rel="noopener noreferrer">
                       <img src={item.imageUrl} alt={item.title} className={'inset-0 h-full w-full object-cover'} />
                       <div className="absolute bottom-0 w-full p-4 bg-gradient-to-t from-black to-transparent">
                         <p className="text-white text-lg font-semibold line-clamp-2">{item.title}</p>
                       </div>
+                    </a>
                     </CarouselItem>
                 ))}
             </CarouselContent>

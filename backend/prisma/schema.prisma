@@ -37,10 +37,39 @@ model Team {
   winRate Float @default(0.0)
   rank    Int   @default(0) // 分区排名
 
-  players   Player[] // 包含的球员
-  fans      User[]   // 关注这只球队的用户
-  homeGames Game[]   @relation("HomeGames") // 作为主队的比赛
-  awayGames Game[]   @relation("AwayGames") // 作为客队的比赛
+  players     Player[] // 包含的球员
+  fans        User[]   // 关注这只球队的用户
+  homeGames   Game[]   @relation("HomeGames") // 作为主队的比赛
+  awayGames   Game[]   @relation("AwayGames") // 作为客队的比赛
+  seasonStats TeamSeasonStat[] // 赛季统计数据
+}
+
+// 球队赛季统计数据
+model TeamSeasonStat {
+  id       Int    @id @default(autoincrement())
+  teamId   Int
+  team     Team   @relation(fields: [teamId], references: [id])
+  season   String // "2024-25"
+
+  // 场均数据
+  pts      Float @default(0) // 场均得分
+  oppPts   Float @default(0) // 场均失分
+  reb      Float @default(0) // 场均篮板
+  ast      Float @default(0) // 场均助攻
+  stl      Float @default(0) // 场均抢断
+  blk      Float @default(0) // 场均盖帽
+  tov      Float @default(0) // 场均失误
+  fgPct    Float @default(0) // 投篮命中率
+  fg3Pct   Float @default(0) // 三分命中率
+  ftPct    Float @default(0) // 罚球命中率
+
+  // 效率数据
+  offRating Float @default(0) // 进攻效率 (每100回合得分)
+  defRating Float @default(0) // 防守效率 (每100回合失分)
+  netRating Float @default(0) // 净效率 (进攻效率-防守效率)
+  pace      Float @default(0) // 比赛节奏 (每48分钟回合数)
+
+  @@unique([teamId, season])
 }
 
 // 3. 球员表：核心资产
