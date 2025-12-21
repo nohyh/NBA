@@ -14,10 +14,10 @@ const useTeamById =(id)=>{
         queryFn:()=>teamServices.getTeamById(id).then(res=>res.data)
     })
 }
-const useTopTeam=(type,limit)=>{
+const useTopTeam=(type,season,limit)=>{
     return useQuery({
-        queryKey:['topTeam',limit,type],
-        queryFn:()=>teamServices.getTopTeam(limit,type).then(res=>res.data)
+        queryKey:['topTeam',limit,type,season],
+        queryFn:()=>teamServices.getTopTeam(limit,type,season).then(res=>res.data)
     })
 }
 export {useTeams,useTeamById,useTopTeam};

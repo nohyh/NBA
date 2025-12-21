@@ -40,14 +40,21 @@ const getTeamById = async (req, res) => {
 const getTopTeam = async (req, res) => {
     try {
         const type = req.query.type;
+        const season = req.query.season;
         if (!validtypes.includes(type)) {
             return res.status(400).json({ message: "Invalid type" });
         }
-        const limit = req.query.limit?parseInt(req.query.limit):null;
+        const limit = req.query.limit ? parseInt(req.query.limit) : null;
         if (type === 'east') {
-            const east = await prisma.team.findMany({
+            const east = await prisma.teamSeasonStat.findMany({
                 where: {
-                    conference: "East",
+                    season: season,
+                    team: {
+                        conference: "East"
+                    }
+                },
+                include: {
+                    team: true
                 },
                 orderBy: {
                     winRate: "desc"
@@ -60,9 +67,15 @@ const getTopTeam = async (req, res) => {
             return res.status(200).json({ teams: east });
         }
         if (type === 'west') {
-            const west = await prisma.team.findMany({
+            const west = await prisma.teamSeasonStat.findMany({
                 where: {
-                    conference: "West",
+                    season: season,
+                    team: {
+                        conference: "West"
+                    }
+                },
+                include: {
+                    team: true
                 },
                 orderBy: {
                     winRate: "desc"
@@ -76,6 +89,9 @@ const getTopTeam = async (req, res) => {
         }
         else {
             const rank = await prisma.teamSeasonStat.findMany({
+                where: {
+                    season: season
+                },
                 orderBy: {
                     [type]: "desc"
                 },

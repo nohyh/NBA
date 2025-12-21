@@ -51,6 +51,11 @@ model TeamSeasonStat {
   team     Team   @relation(fields: [teamId], references: [id])
   season   String // "2024-25"
 
+  // 战绩数据
+  wins     Int   @default(0) // 胜场
+  losses   Int   @default(0) // 负场
+  winRate  Float @default(0) // 胜率
+
   // 场均数据
   pts      Float @default(0) // 场均得分
   oppPts   Float @default(0) // 场均失分
