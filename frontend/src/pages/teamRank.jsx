@@ -1,4 +1,5 @@
 import { useTopTeam } from "../hooks/useTeam"
+import { Button } from "@/components/ui/button"
 import {
   Select,
   SelectContent,
@@ -12,14 +13,21 @@ const TeamRank = () => {
   const [rightType, setRightType] = useState('west')
   const [leftSeason, setLeftSeason] = useState('2025-26')
   const [rightSeason, setRightSeason] = useState('2025-26')
+  const [leftExpanded, setLeftExpanded] = useState(true)
+  const [rightExpanded, setRightExpanded] = useState(true)
   const validtypes = ['east', 'west', 'pts', 'oppPts', 'offRating', 'defRating', 'reb', 'ast'];
  const validSeasons = ['2021-22', '2022-23', '2023-24', '2024-25', '2025-26'];
   const { data: { teams: leftTeams = [] } = {} } = useTopTeam(leftType, leftSeason)
   const { data: { teams: rightTeams = [] } = {} } = useTopTeam(rightType, rightSeason)
+  const leftClass = leftExpanded?'flex-wrap justify-center w-1/2   rounded-3xl overflow-hidden shadow-xl mr-8':'hidden'
+  const rightClass = rightExpanded?'flex-wrap justify-center w-1/2   rounded-3xl overflow-hidden shadow-xl mr-8':'hidden'
   return (
     <div className="flex justify-center">
       <div className="flex  justify-around w-4/5 my-10">
-        <div className="flex-wrap justify-center w-1/2   rounded-3xl overflow-hidden shadow-xl mr-8">
+        <Button onClick={() => setLeftExpanded(!leftExpanded)}>
+          {leftExpanded ? 'Fold' : 'Expand'}
+        </Button>
+        <div className={leftClass}>
         <div className="flex">
           <Select defaultValue={leftType} onValueChange={(value) => setLeftType(value)}>
             <SelectTrigger className="w-[160px]">
@@ -65,7 +73,10 @@ const TeamRank = () => {
             ))}
           </div>
         </div>
-        <div className="flex-wrap justify-center w-1/2  rounded-3xl overflow-hidden shadow-xl ml-8">
+        <Button onClick={() => setRightExpanded(!rightExpanded)}>
+          {rightExpanded ? 'Fold' : 'Expand'}
+        </Button>
+        <div className={rightClass}>
         <div className="flex">
           <Select defaultValue={rightType} onValueChange={(value) => setRightType(value)}>
             <SelectTrigger className="w-[160px]">

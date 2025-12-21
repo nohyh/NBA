@@ -109,6 +109,7 @@ model PlayerSeasonStat {
   playerId Int
   player   Player @relation(fields: [playerId], references: [id])
   season   String // 例如: "2024-25"
+  seasonType String @default("Regular Season") // "Regular Season" 或 "Playoffs"
 
   gamesPlayed Int      // GP - 出场次数
   min         Float?   // MIN - 场均上场时间
@@ -141,6 +142,8 @@ model PlayerSeasonStat {
   stlTov      Float?   // STL_TOV - 抢断失误比
 
   updatedAt DateTime @updatedAt
+  
+  @@unique([playerId, season, seasonType])
 }
 
 // 5. 球员单场数据 (用于图表走势分析和今日MVP)
