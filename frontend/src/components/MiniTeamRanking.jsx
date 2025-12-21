@@ -1,8 +1,8 @@
 import {Link} from "react-router-dom"
 import {useTopTeam} from "../hooks/useTeam"
 const MiniTeamRanking = ()=>{
-    const { data: { teams: east=[] } = {} } = useTopTeam('east',3);
-    const { data: { teams: west=[] } = {} } = useTopTeam('west',3);
+    const { data: { teams: east=[] } = {} } = useTopTeam('east','2025-26',3);
+    const { data: { teams: west=[] } = {} } = useTopTeam('west','2025-26',3);
     if(!east || !west){
         return null
     }
@@ -15,9 +15,9 @@ const MiniTeamRanking = ()=>{
                     <div>
                         {east.map((team)=>(
                             <div key={team.id} className="flex items-center">
-                                <img src={team.logoUrl} alt={team.name} className="w-10 h-10" />
-                                <span className="mr-2">{team.name}</span>
-                                <span>{team.wins}-{team.losses}</span>
+                                <img src={team.team.logoUrl} alt={team.team.name} className="w-10 h-10" />
+                                <span className="mr-2">{team.team.name}</span>
+                                <span>{team.team.wins}-{team.team.losses}</span>
                             </div>
                         ))}
                     </div>
@@ -28,9 +28,9 @@ const MiniTeamRanking = ()=>{
                     <div>
                         {west.map((team)=>( 
                             <div key={team.id} className="flex items-center">
-                                <img src={team.logoUrl} alt={team.name} className="w-10 h-10" />
-                                <span className="mr-2">{team.name}</span>
-                                <span>{team.wins}-{team.losses}</span>
+                                <img src={team.team.logoUrl} alt={team.team.name} className="w-10 h-10" />
+                                <span className="mr-2">{team.team.name}</span>
+                                <span>{team.team.wins}-{team.team.losses}</span>
                             </div>
                         ))}
                     </div>

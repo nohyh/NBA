@@ -116,5 +116,46 @@ const mvpOfToday = async (req, res) => {
     }
 }
 
+const getTopPlayer =async(req,res)=>{
+    try{
+        const  page =parseInt(req.query.page);
+        const  limit  =parseInt(req.query.limit);
+        const season =req.query.season;
+        const seasonType =req.query.seasonType;
+        const dataType =req.query.dataType;
+        const players =await prisma.playerSeasonStat.findMany({
+            where:{
+                season:season,
+                seasonType:seasonType
+            },
+            orderBy:{
+                [dataType]:"desc"
+            },
+            include:{
+                player:{
+                    include:{
+                        team:true
+                    }
+                }
 
-module.exports = { getPlayers, getPlayerById, getLeaders, mvpOfToday }
+            },
+            take:parseInt(limit),
+            skip:parseInt((page-1)*limit)
+        })
+        const totalPlayers =await prisma.playerSeasonStat.count({
+            where:{ 
+                season:season,
+                seasonType:seasonType
+            }
+        })
+        res.status(200).json({ players, totalPlayers });
+
+    }
+    catch(error){
+        console.log(error);
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+
+module.exports = { getPlayers, getPlayerById, getLeaders, mvpOfToday,getTopPlayer }

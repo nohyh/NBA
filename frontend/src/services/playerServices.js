@@ -20,9 +20,17 @@ const getMvpOfToday =async()=>{
     return response.data;
 }
 
+const getTopPlayer =async(season,seasonType,dataType,page,limit)=>{
+    if(!season || !seasonType || !dataType || !page || !limit){
+        return null;
+    }
+    const response =await apiClient.get(`/players/topPlayer?season=${season}&seasonType=${seasonType}&dataType=${dataType}&page=${page}&limit=${limit}`);
+    return response.data;
+}
 export default {
     getLeaders,
     getPlayers,
     getPlayerById,
-    getMvpOfToday
+    getMvpOfToday,
+    getTopPlayer
 }
