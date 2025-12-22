@@ -2,7 +2,7 @@ const prisma = require("../utils/prisma");
 
 const getGameByDate = async(req,res)=>{
     try{
-        const {date} = req.params;
+        const {date} = req.query;
         const games =await prisma.game.findMany({
             where:{
                  gameDate: {

@@ -9,11 +9,9 @@ import MvpCard from "../components/MvpCard"
 import NewsCarousel from "../components/NewsCarousel"
 import News from "../components/News"
 const Home = () => {
-  const {data} = useGameByDate(getETDate())
-   const TodaysGame = data?.games
   return (
   <div>
-    <GameCarousel games={TodaysGame} />
+    <GameCarousel/>
     <div className="flex gap-4 p-4">
       <div className="flex flex-col w-3/4 gap-4">
         <div className="flex gap-4">
