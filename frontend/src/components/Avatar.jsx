@@ -2,9 +2,12 @@ import{Avatar,AvatarFallback,AvatarImage} from "./ui/avatar"
 import{Popover,PopoverContent,PopoverTrigger} from "./ui/popover"
 import {Button} from "./ui/button"
 import{Link} from "react-router-dom"
+import LoginDialog from "../pages/Login"
+import { useAuth } from "../context/AuthContext"
 //import{isLogin} from "../utils/auth"
 const UserAvatar = () => {
-  const isLoggedIn = true;
+  const {user,signOut} = useAuth();
+  const isLoggedIn = !!user;
   return isLoggedIn ? (
     <Popover>
       <PopoverTrigger>
@@ -21,7 +24,7 @@ const UserAvatar = () => {
             </Button>
           </Link>
           <Link to="/">
-            <Button className="flex items-center justify-center gap-2 cursor-pointer w-full ">
+            <Button onClick={signOut} className="flex items-center justify-center gap-2 cursor-pointer w-full ">
               Sign Out
             </Button>
           </Link>
@@ -29,11 +32,7 @@ const UserAvatar = () => {
       </PopoverContent>
     </Popover>
   ) : (
-    <Link to="/login">
-      <Button className="flex items-center justify-center gap-2 cursor-pointer w-full ">
-        Login
-      </Button>
-    </Link>
+    <LoginDialog/>
   )
 }
 export default UserAvatar

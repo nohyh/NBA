@@ -7,4 +7,5 @@ router.post("/users/signup",userController.signUp);
 router.post("/users/signin",userController.signIn);
 router.post("/users/signout",userController.signOut);
 router.get("/users/me",authMiddleware, userController.getUser);
+router.get("/users/checkUsername",userController.checkUsername);
 module.exports = router;
