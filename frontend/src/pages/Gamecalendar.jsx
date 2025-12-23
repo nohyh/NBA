@@ -85,7 +85,7 @@ const GameCalendar =()=>{
         <Button variant="ghost" className="bg-gray-200" onClick={()=>setDate(new Date())}> RESET</Button>
         </div>
         <div className="flex flex-wrap w-4/5  items-center justify-center rounded-3xl overflow-hidden shadow-xl bg-white mx-auto mt-10  gap-10">
-          {games.length>0&&games?(games.map((game)=>(
+          {games.length>0?(games.map((game)=>(
                 <div className="flex w-1/4 mb-10" key={game.id}>
                   <GameCard game={game}/>
                 </div>

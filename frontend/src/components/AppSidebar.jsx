@@ -21,7 +21,6 @@ const items = [
   { title: "球队排行", url: "/team-rank", icon:Trophy},
   { title: "个人数据排行", url: "/player-rank", icon:BarChart3},
   {title:"我的",url:"/my",icon:User},
-  { title: "设置", url: "/setting", icon: Settings },
 ]
 
 export function AppSidebar() {
