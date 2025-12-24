@@ -70,6 +70,7 @@ const getUser =async(req,res)=>{
        select:{
            id:true,
            username:true,
+           
        }
        })
         if(!user){

@@ -30,6 +30,7 @@ model Team {
   conference   String  // West / East
   division     String? // 分区
   logoUrl      String? // 球队Logo链接
+  primaryColor String? // 球队主色调 (Hex格式，如 #552583)
 
   // 战绩 (每日更新)
   wins    Int   @default(0)

@@ -18,5 +18,11 @@ const useTopPlayer =(season,seasonType,dataType,page,limit)=>{
         queryFn:async()=>playerServices.getTopPlayer(season,seasonType,dataType,page,limit)
     })
 }
+const usePlayer= (playerId)=>{
+    return useQuery({
+        queryKey:["player",playerId],
+        queryFn:async()=>playerServices.getPlayerById(playerId)
+    })
+}
 
-export{useplayerLeaders,useTodayMvp,useTopPlayer}
+export{useplayerLeaders,useTodayMvp,useTopPlayer,usePlayer}

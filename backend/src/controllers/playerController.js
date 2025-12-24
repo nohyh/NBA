@@ -38,7 +38,13 @@ const getPlayerById = async (req, res) => {
             where: { id: parseInt(req.params.id) },
             include: {
                 seasonStats: true,
-                team: true
+                team: true,
+                gameLogs:{
+                    orderBy:{
+                        gameDate:"desc"
+                    },
+                    take:5
+                }
             }
         })
         if (!player) {
