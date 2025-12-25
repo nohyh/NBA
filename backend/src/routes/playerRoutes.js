@@ -7,4 +7,5 @@ router.get("/players/leaders",playerController.getLeaders);
 router.get("/players/mvpOfToday",playerController.mvpOfToday);
 router.get("/players/topPlayer",playerController.getTopPlayer);
 router.get("/players/:id",playerController.getPlayerById);
+router.get("/players/team/:teamId",playerController.getPlayerByTeam);
 module.exports = router;

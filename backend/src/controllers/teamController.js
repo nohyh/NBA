@@ -24,7 +24,8 @@ const getTeamById = async (req, res) => {
                 id: parseInt(req.params.id)
             },
             include: {
-                players: true
+                players: true,
+                seasonStats: true
             }
         })
         if (!team) {

@@ -6,4 +6,10 @@ const useGameByDate = (date) => {
         queryFn: async () => await gameServices.getGameByDate(date).then(res => res.data),
     })
 }
-export { useGameByDate }
+const useGameByTeam = (teamId) => {
+    return useQuery({
+        queryKey: ['games',teamId],
+        queryFn: async () => await gameServices.getGameByTeam(teamId).then(res => res.data),
+    })
+}
+export { useGameByDate,useGameByTeam }

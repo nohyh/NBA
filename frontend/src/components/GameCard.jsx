@@ -19,6 +19,7 @@ const GameCard = ({ game }) => (
     </div>
     </div>
     <span className="absolute top-8 left-1/2 -translate-x-1/2 text-sm"> NBA常规赛</span>
+    <span className="absolute top-2 right-5 translate-x-1/2 text-xs"> {(game.gameDate).slice(5,10)}</span>
     <span className={`absolute bottom-5 left-1/2 -translate-x-1/2 text-sm ${game.status==='Final' ? 'text-black':game.status.includes('Q')?'text-red-500':'text-green-500'}`}>
      {game.status}
     </span>

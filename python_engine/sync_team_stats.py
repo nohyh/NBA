@@ -158,7 +158,30 @@ def sync_team_stats(season=CURRENT_SEASON):
             synced_count += 1
         
         conn.commit()
-        print(f"  ✅ {season} 赛季同步完成！已更新 {synced_count} 支球队")
+        print(f"  ✅ {season} 赛季统计数据同步完成！已更新 {synced_count} 支球队")
+        
+        # 更新 Team.rank 字段（分区排名）
+        print(f"  📊 计算分区排名...")
+        for conference in ['East', 'West']:
+            # 获取该分区所有球队的胜率，按胜率降序
+            cursor.execute("""
+                SELECT t.id, ts.winRate
+                FROM Team t
+                JOIN TeamSeasonStat ts ON t.id = ts.teamId
+                WHERE t.conference = ? AND ts.season = ?
+                ORDER BY ts.winRate DESC
+            """, (conference, season))
+            
+            teams_in_conf = cursor.fetchall()
+            
+            # 更新排名
+            for rank, (team_id, win_rate) in enumerate(teams_in_conf, start=1):
+                cursor.execute("UPDATE Team SET rank = ? WHERE id = ?", (rank, team_id))
+            
+            print(f"    {conference}: 已更新 {len(teams_in_conf)} 支球队排名")
+        
+        conn.commit()
+        print(f"  ✅ {season} 赛季排名更新完成！")
         return synced_count
         
     except Exception as e:

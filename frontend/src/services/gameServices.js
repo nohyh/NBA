@@ -5,6 +5,10 @@ const getGameByDate = (date) => {
         : date;
     return apiClient.get(`/games?date=${dateStr}`);
 }
+const getGameByTeam= (teamId) => {
+    return apiClient.get(`/game/${teamId}`);
+}
 export default {
-    getGameByDate
+    getGameByDate,
+    getGameByTeam
 }

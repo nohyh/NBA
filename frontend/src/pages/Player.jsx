@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom"
 import { usePlayer } from "../hooks/usePlayer"
-import { StarIcon,HeartIcon } from "lucide-react"
+import { StarIcon } from "lucide-react"
 import { useState } from "react"
 import {useAuth} from "../context/AuthContext"
 import{ToCm,ToKg} from "../utils/transform"

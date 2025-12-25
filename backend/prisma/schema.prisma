@@ -43,6 +43,10 @@ model Team {
   homeGames   Game[]   @relation("HomeGames") // 作为主队的比赛
   awayGames   Game[]   @relation("AwayGames") // 作为客队的比赛
   seasonStats TeamSeasonStat[] // 赛季统计数据
+
+  city String?
+  yearFounded Int?
+  championship Int?
 }
 
 // 球队赛季统计数据
