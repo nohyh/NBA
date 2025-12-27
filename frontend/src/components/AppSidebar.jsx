@@ -20,7 +20,6 @@ const items = [
   { title: "观赛日历", url: "/calendar", icon: Calendar },
   { title: "球队排行", url: "/team-rank", icon:Trophy},
   { title: "个人数据排行", url: "/player-rank", icon:BarChart3},
-  {title:"我的",url:"/my",icon:User},
 ]
 
 export function AppSidebar() {

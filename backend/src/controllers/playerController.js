@@ -182,5 +182,25 @@ const getPlayerByTeam =async(req,res)=>{
     }
 }
 
+const searchPlayer =async(req,res)=>{
+    try{
+        const search =req.query.search;
+        const players =await prisma.player.findMany({
+            where:{
+                fullName:{
+                    contains:search
+                }
+            },
+            include:{
+                team:true
+            }
+        })
+        res.status(200).json({ players });
+    }
+    catch(error){
+        console.log(error);
+        return res.status(500).json({ message: error.message });
+    }
+}
 
-module.exports = { getPlayers, getPlayerById, getLeaders, mvpOfToday,getTopPlayer,getPlayerByTeam }
+module.exports = { getPlayers, getPlayerById, getLeaders, mvpOfToday,getTopPlayer,getPlayerByTeam,searchPlayer }

@@ -30,5 +30,12 @@ const usePlayerByTeam = (teamId)=>{
         queryFn:async()=>playerServices.getPlayerByTeam(teamId)
     })
 }
+const useSearchPlayer = (search)=>{
+    return useQuery({
+        queryKey:["searchPlayer",search],
+        queryFn:async()=>playerServices.searchPlayer(search),
+        enabled :!!search
+    })
+}
 
-export{useplayerLeaders,useTodayMvp,useTopPlayer,usePlayer,usePlayerByTeam}
+export{useplayerLeaders,useTodayMvp,useTopPlayer,usePlayer,usePlayerByTeam,useSearchPlayer}

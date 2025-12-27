@@ -31,11 +31,17 @@ const getPlayerByTeam =async(teamId)=>{
     const response =await apiClient.get(`/players/team/${teamId}`);
     return response.data;
 }
+
+const searchPlayer =async(search)=>{
+    const response =await apiClient.get(`/players/search?search=${search}`);
+    return response.data;
+}
 export default {
     getLeaders,
     getPlayers,
     getPlayerById,
     getMvpOfToday,
     getTopPlayer,
-    getPlayerByTeam
+    getPlayerByTeam,
+    searchPlayer
 }

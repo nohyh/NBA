@@ -9,7 +9,7 @@ const Player = () => {
     const { data: { player} = {} } = usePlayer(playerId);
     const [stared,setStared] = useState(false)
     const {user} = useAuth()
-    if(!player){
+    if(!player||!player.seasonStats?.length){
         return <div>Player not found</div>
     }
     return (

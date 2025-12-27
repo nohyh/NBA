@@ -5,7 +5,6 @@ import Search from './pages/Search'
 import Gamecalendar from './pages/Gamecalendar'
 import TeamRank from './pages/TeamRank'
 import PlayerRank from './pages/PlayerRank'
-import My from './pages/My'
 import Profile from './pages/Profile'
 import Player from './pages/Player'
 import {AuthProvider}  from './context/AuthContext.jsx'
@@ -22,7 +21,6 @@ function App() {
           <Route path="/calendar" element={<Gamecalendar />} />
           <Route path="/team-rank" element={<TeamRank />} />
           <Route path="/player-rank" element={<PlayerRank />} />
-          <Route path="/my" element={<My />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/player/:playerId" element={<Player/>} />
           <Route path="/team/:teamId" element={<Team/>} />
