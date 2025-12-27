@@ -10,6 +10,7 @@ import Profile from './pages/Profile'
 import Player from './pages/Player'
 import {AuthProvider}  from './context/AuthContext.jsx'
 import Team from './pages/Team'
+import Game from './pages/Game'
 function App() {
   return (
     <BrowserRouter>
@@ -25,6 +26,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/player/:playerId" element={<Player/>} />
           <Route path="/team/:teamId" element={<Team/>} />
+          <Route path="/game/:gameId" element={<Game/>} />
         </Route>
       </Routes>
       </AuthProvider>

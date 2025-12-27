@@ -1,5 +1,5 @@
 import { Carousel, CarouselContent, CarouselItem ,CarouselNext,CarouselPrevious} from "@/components/ui/carousel"
-import GameCard from "./GameCard"
+import {GameCard} from "./GameCard"
 import { useGameByDate } from "../hooks/useGame"
 import { getETDate } from "../utils/date"
 const GameCarousel = () => {

@@ -4,5 +4,6 @@ const gameController= require("../controllers/gameController");
 
 router.get("/games", gameController.getGameByDate);
 router.get("/game/:teamId", gameController.getGameByTeam);
+router.get("/games/:gameId", gameController.getGameDetail);
 
 module.exports = router;

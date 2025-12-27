@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { CalendarIcon } from "lucide-react"
 import { useMemo, useEffect, useState } from "react"
 import {useGameByDate} from "../hooks/useGame"
-import GameCard from "../components/GameCard"
+import{GameCard} from "../components/GameCard"
 const GameCalendar =()=>{
 
     const week =['星期一','星期二','星期三','星期四','星期五','星期六','星期日']

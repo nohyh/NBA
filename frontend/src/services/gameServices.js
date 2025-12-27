@@ -8,7 +8,11 @@ const getGameByDate = (date) => {
 const getGameByTeam= (teamId) => {
     return apiClient.get(`/game/${teamId}`);
 }
+const getGameDetail = (gameId) => {
+    return apiClient.get(`/games/${gameId}`);
+}
 export default {
     getGameByDate,
-    getGameByTeam
+    getGameByTeam,
+    getGameDetail
 }

@@ -190,6 +190,16 @@ model Game {
   awayTeam      Team   @relation("AwayGames", fields: [awayTeamId], references: [id])
   awayTeamScore Int?   // 客队得分 (比赛结束后才有)
   
+  // 四节比分
+  homeQ1  Int?
+  homeQ2  Int?
+  homeQ3  Int?
+  homeQ4  Int?
+  awayQ1  Int?
+  awayQ2  Int?
+  awayQ3  Int?
+  awayQ4  Int?
+  
   updatedAt  DateTime @updatedAt
   
   @@index([gameDate]) // 按日期查询优化

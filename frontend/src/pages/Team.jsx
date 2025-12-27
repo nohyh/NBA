@@ -5,7 +5,7 @@ import { Carousel, CarouselContent, CarouselItem ,CarouselNext,CarouselPrevious}
 import { useGameByTeam } from '@/hooks/useGame'
 import { useTeamById } from '@/hooks/useTeam'
 import{usePlayerByTeam} from '@/hooks/usePlayer'
-import GameCard from '@/components/GameCard'
+import {GameCard} from '@/components/GameCard'
 import PlayerCard from '@/components/PlayerCard'
 import {useAuth} from "../context/AuthContext"
 const Team = () => {

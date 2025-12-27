@@ -8,6 +8,7 @@ const MvpCard = () => {
   if (!mvp) return null
   return (
     <div className ="relative h-[400px] w-[280px] overflow-hidden rounded-3xl bg-white shadow-xl">
+       <Link to={`/player/${mvp.id}`}>
         <img src={mvp.player.headshotUrl} className="absolute inset-0 h-full w-full object-cover" alt={mvp.player.fullName}/>
         <div className="absolute inset-0 bg-gradient-to-t from-white via-white/70 to-transparent"/>
         <div className="absolute bottom-6 left-6 right-6">
@@ -19,6 +20,7 @@ const MvpCard = () => {
                     <span> {mvp.ast}AST</span>
                 </div>
             </div>
+          </Link>
     </div>
   )
 }

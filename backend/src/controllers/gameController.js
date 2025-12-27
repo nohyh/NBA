@@ -60,7 +60,40 @@ const getGameByTeam =async(req,res)=>{
         return res.status(500).json({message:error.message});
     }
 }
+const getGameDetail =async(req,res)=>{
+    try{
+        const {gameId} =req.params;
+        const game = await prisma.game.findUnique({
+            where:{
+                id:parseInt(gameId)
+            },
+            include:{
+                homeTeam:true,
+                awayTeam:true,
+            }
+        })
+        if(!game){
+            return res.status(404).json({message:"No game found"});
+        }
+        const playerLog = await prisma.playerGameLog.findMany({
+            where:{
+                gameId:game.gameId
+            },
+            include :{
+                player:{include:{team:true}}
+            }
+        })
+        const homePlayers = playerLog.filter(log=>log.player.teamId === game.homeTeamId);
+        const awayPlayers = playerLog.filter(log=>log.player.teamId === game.awayTeamId);
+        return res.status(200).json({game,homePlayers,awayPlayers});
+    }
+    catch(error){
+        console.log(error);
+        return res.status(500).json({message:error.message});
+    }
+}
 module.exports = {
     getGameByDate,
-    getGameByTeam
+    getGameByTeam,
+    getGameDetail
 }

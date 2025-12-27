@@ -12,4 +12,10 @@ const useGameByTeam = (teamId) => {
         queryFn: async () => await gameServices.getGameByTeam(teamId).then(res => res.data),
     })
 }
-export { useGameByDate,useGameByTeam }
+const useGameDetail = (gameId) => {
+    return useQuery({
+        queryKey: ['games',gameId],
+        queryFn: async () => await gameServices.getGameDetail(gameId).then(res => res.data),
+    })
+}
+export { useGameByDate,useGameByTeam,useGameDetail }
