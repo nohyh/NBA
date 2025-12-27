@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
 import { StarIcon } from "lucide-react"
 import { useParams } from 'react-router-dom'
 import { Carousel, CarouselContent, CarouselItem ,CarouselNext,CarouselPrevious} from "@/components/ui/carousel"
@@ -13,8 +13,13 @@ const Team = () => {
     const { data: { team } = {} } = useTeamById(teamId);
     const { data: { games } = {} } = useGameByTeam(teamId);
     const { data: { players } = {} } = usePlayerByTeam(teamId);
-    const [stared,setStared] = useState(false)
-    const {user} = useAuth()
+    const {user,favoriteTeam,unfavoriteTeam} = useAuth()
+    const [stared,setStared] = useState(user?.favoriteTeams?.some((t) => t.id === parseInt(teamId)))
+    useEffect(() => {
+  if (user?.favoriteTeams) {
+    setStared(user.favoriteTeams.some((t) => t.id === parseInt(teamId)))
+  }
+}, [user, teamId])
     if (!team||games?.length==0) {
         return null;
     }
@@ -25,6 +30,20 @@ const Team = () => {
         return gameDate>=today;
     })??0;
     const startIndex =todayIndex-2;
+    const handleStar = async() => {
+        const newStared = !stared
+        setStared(newStared)
+        try{
+        if(newStared){
+            await favoriteTeam(teamId)
+        }else{
+            await unfavoriteTeam(teamId)
+        }
+    }catch(error){
+        setStared(!newStared)
+        console.log(error)
+    }
+    }
     return (
         <div className='flex flex-wrap '>
             <div className="flex  w-full h-[300px]  shadow-lg  p-8" style={{backgroundColor:team.primaryColor}}>
@@ -41,7 +60,7 @@ const Team = () => {
                     <span className='text-xl font-semibold'>总冠军数：{team.championship}</span>
                 </div>
                  {!!user?<div  className="flex items-center gap-2 ml-20 ">
-                        <StarIcon onClick={()=>setStared(!stared)}  className={stared ? "text-yellow-300" : "text-white  cursor-pointer"} />
+                        <StarIcon onClick={handleStar}  className={stared ? "text-yellow-300" : "text-white  cursor-pointer"} />
                          <span className="text-white font-light"> {stared?'已订阅':'订阅'}</span>
                 </div>:null}
                 

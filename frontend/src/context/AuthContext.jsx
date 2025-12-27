@@ -41,6 +41,22 @@ export const AuthProvider = ({ children }) => {
         const res = await apiClient.get("/users/checkUsername?username=" + username);
         return res.data.exists;
     }
+    const favoritePlayer = async (playerId) => {
+        const res = await apiClient.post("/users/favoritePlayer/" + playerId);
+        return res.data;
+    }
+    const unfavoritePlayer = async (playerId) => {
+        const res = await apiClient.post("/users/unfavoritePlayer/" + playerId);
+        return res.data;
+    }
+    const favoriteTeam = async (teamId) => {
+        const res = await apiClient.post("/users/favoriteTeam/" + teamId);
+        return res.data;
+    }
+    const unfavoriteTeam = async (teamId) => {
+        const res = await apiClient.post("/users/unfavoriteTeam/" + teamId);
+        return res.data;
+    }
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -58,7 +74,7 @@ export const AuthProvider = ({ children }) => {
         fetchUser();
     }, [])
     return (
-        <AuthContext.Provider value={{ user, signIn, signUp, signOut, checkUsername }}>
+        <AuthContext.Provider value={{ user, signIn, signUp, signOut, checkUsername, favoritePlayer, unfavoritePlayer, favoriteTeam, unfavoriteTeam }}>
             {children}
         </AuthContext.Provider>
     )

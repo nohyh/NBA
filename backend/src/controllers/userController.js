@@ -99,4 +99,84 @@ const checkUsername =async(req,res)=>{
         res.status(500).json({message:error.message});
     }
 }
-module.exports = {signUp,signIn,signOut,getUser,checkUsername};
+const favoritePlayer =async(req,res)=>{
+    try{
+        const playerId =parseInt(req.params.playerId);
+        await prisma.user.update({
+            where:{
+                id:req.user.id
+            },
+            data:{
+                favoritePlayers:{
+                    connect:{id:playerId}
+                }
+            }
+        })
+        res.status(200).json({message:"Player favorited"});
+    }
+    catch(error){
+        console.log(error);
+        res.status(500).json({message:error.message});
+    }
+}
+const unfavoritePlayer =async(req,res)=>{
+    try{
+        const playerId =parseInt(req.params.playerId);
+        await prisma.user.update({
+            where:{
+                id:req.user.id
+            },
+            data:{
+                favoritePlayers:{
+                    disconnect:{id:playerId}
+                }
+            }
+        })
+        res.status(200).json({message:"Player unfavorited"});
+    }
+    catch(error){
+        console.log(error);
+        res.status(500).json({message:error.message});
+    }
+}
+const favoriteTeam =async(req,res)=>{
+    try{
+        const teamId =parseInt(req.params.teamId);
+        await prisma.user.update({
+            where:{
+                id:req.user.id
+            },
+            data:{
+                favoriteTeams:{
+                    connect:{id:teamId}
+                }
+            }
+        })
+        res.status(200).json({message:"Team favorited"});
+    }
+    catch(error){
+        console.log(error);
+        res.status(500).json({message:error.message});
+    }
+}
+const unfavoriteTeam =async(req,res)=>{
+    try{
+        const teamId =parseInt(req.params.teamId);
+        await prisma.user.update({
+            where:{
+                id:req.user.id
+            },
+            data:{
+                favoriteTeams:{
+                    disconnect:{id:teamId}
+                }
+            }
+        })
+        res.status(200).json({message:"Team unfavorited"});
+    }
+    catch(error){
+        console.log(error);
+        res.status(500).json({message:error.message});
+    }
+}
+module.exports = {signUp,signIn,signOut,getUser,checkUsername,favoritePlayer,unfavoritePlayer,favoriteTeam,unfavoriteTeam};

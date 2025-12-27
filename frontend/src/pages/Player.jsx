@@ -1,17 +1,35 @@
 import { useParams, useNavigate } from "react-router-dom"
 import { usePlayer } from "../hooks/usePlayer"
 import { StarIcon } from "lucide-react"
-import { useState } from "react"
+import { useState,useEffect } from "react"
 import { useAuth } from "../context/AuthContext"
 import { ToCm, ToKg } from "../utils/transform"
 const Player = () => {
     const { playerId } = useParams()
     const { data: { player } = {} } = usePlayer(playerId);
-    const [stared, setStared] = useState(false)
-    const { user } = useAuth()
-    const navigate = useNavigate()
+    const { user, favoritePlayer, unfavoritePlayer } = useAuth()
+    const [stared, setStared] = useState(user?.favoritePlayers?.some((p) => p.id === parseInt(playerId)))
+      useEffect(() => {
+  if (user?.favoritePlayers) {
+    setStared(user.favoritePlayers.some((p) => p.id === parseInt(playerId)))
+  }
+}, [user, playerId])
     if (!player || !player.seasonStats?.length) {
         return <div>Player not found</div>
+    }
+    const handleStar = async() => {
+        const newStared = !stared
+        setStared(newStared)
+        try{
+        if(newStared){
+            await favoritePlayer(playerId)
+        }else{
+            await unfavoritePlayer(playerId)
+        }
+    }catch(error){
+        setStared(!newStared)
+        console.log(error)
+    }
     }
     return (
         <div className="flex flex-col">
@@ -25,7 +43,7 @@ const Player = () => {
                         <span className="text-5xl font-bold"> {player.lastName}</span>
                     </p>
                     {!!user ? <div className="flex items-center gap-2 ml-80 ">
-                        <StarIcon onClick={() => setStared(!stared)} className={stared ? "text-yellow-300" : "text-white  cursor-pointer"} />
+                        <StarIcon onClick={handleStar} className={stared ? "text-yellow-300" : "text-white  cursor-pointer"} />
                         <span className="text-white font-light"> {stared ? '已订阅' : '订阅'}</span>
                     </div> : null}
                 </div>

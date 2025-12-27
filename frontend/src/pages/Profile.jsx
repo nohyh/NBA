@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import {useAuth} from "../context/AuthContext";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
-import PlayerCard from "../components/PlayerCard";
 const Profile = () => {
     const navigate = useNavigate();
     const {user} = useAuth();
@@ -23,9 +22,25 @@ const Profile = () => {
                 <div className="flex flex-col gap-5">
                 <div className="flex flex-col ">
                      <span>我喜欢的球员</span>
-                     <div className="rounded-2xl shadow-lg w-[400px] h-[400px]">
+                     <div className=" flex flex-col gap-5 rounded-2xl shadow-lg w-[600px] h-[400px]">
                          {user?.favoritePlayers?.map((player) => (
-                             <PlayerCard key={player.id} player={player} />
+                             <div key={player.id}>
+                                <span>
+                                   {player.fullName}
+                                </span>
+                            </div>
+                         ))}
+                     </div>
+                </div>
+                <div className="flex flex-col ">
+                     <span>我喜欢的球队</span>
+                     <div className=" flex flex-col gap-5 rounded-2xl shadow-lg w-[600px] h-[400px]">
+                         {user?.favoriteTeams?.map((team) => (
+                             <div key={team.id}>
+                                <span>
+                                   {team.fullName}
+                                </span>
+                            </div>
                          ))}
                      </div>
                 </div>
