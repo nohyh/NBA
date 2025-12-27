@@ -13,11 +13,11 @@ model User {
   password  String   // 存哈希后的密码
   createdAt DateTime @default(now())
 
-  // 个性化设置：关联到具体的球队和球员
-  favoriteTeamId   Int?
-  favoriteTeam     Team?   @relation(fields: [favoriteTeamId], references: [id])
-  favoritePlayerId Int?
-  favoritePlayer   Player? @relation(fields: [favoritePlayerId], references: [id])
+  // 多对多：关注的球队和球员
+  favoriteTeams   Team[]   @relation("UserFavoriteTeams")
+  favoritePlayers Player[] @relation("UserFavoritePlayers")
+  
+  avatarUrl        String? // 用户头像 URL
 }
 
 // 2. 球队表：基础信息
@@ -38,8 +38,8 @@ model Team {
   winRate Float @default(0.0)
   rank    Int   @default(0) // 分区排名
 
-  players     Player[] // 包含的球员
-  fans        User[]   // 关注这只球队的用户
+  players       Player[] // 包含的球员
+  favoritedBy   User[]   @relation("UserFavoriteTeams") // 收藏了这个球队的用户
   homeGames   Game[]   @relation("HomeGames") // 作为主队的比赛
   awayGames   Game[]   @relation("AwayGames") // 作为客队的比赛
   seasonStats TeamSeasonStat[] // 赛季统计数据
@@ -101,7 +101,7 @@ model Player {
   // 关系
   teamId Int?
   team   Team? @relation(fields: [teamId], references: [id])
-  fans   User[] // 关注这个球员的用户
+  fans        User[]   @relation("UserFavoritePlayers") // 关注这个球员的用户
 
   // 数据关联
   seasonStats PlayerSeasonStat[]

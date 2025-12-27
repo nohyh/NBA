@@ -4,7 +4,6 @@ import {Button} from "./ui/button"
 import{Link} from "react-router-dom"
 import LoginDialog from "../pages/Login"
 import { useAuth } from "../context/AuthContext"
-//import{isLogin} from "../utils/auth"
 const UserAvatar = () => {
   const {user,signOut} = useAuth();
   const isLoggedIn = !!user;
@@ -12,8 +11,8 @@ const UserAvatar = () => {
     <Popover>
       <PopoverTrigger>
         <Avatar className="cursor-pointer">
-          <AvatarImage src="https://github.com/evilrabbit.png" alt="evilrabbit" />
-          <AvatarFallback>CN</AvatarFallback>
+          <AvatarImage src={user.avatarUrl || "https://github.com/evilrabbit.png"} alt={user.username} />
+          <AvatarFallback>{user.username.charAt(0).toUpperCase()}</AvatarFallback>
         </Avatar>
       </PopoverTrigger>
       <PopoverContent className="w-32 ">
