@@ -8,12 +8,17 @@ import MiniPlayerRanking from "../components/MiniPlayerRanking"
 import MvpCard from "../components/MvpCard"
 import NewsCarousel from "../components/NewsCarousel"
 import News from "../components/News"
+import LikedPlayer from "../components/LikedPlayer"
+import Trailer from "../components/Trailer"
 const Home = () => {
   return (
   <div>
     <GameCarousel/>
     <div className="flex gap-4 p-4">
       <div className="flex flex-col w-3/4 gap-4">
+       <div className="w-full flex justify-center">
+        <Trailer/>
+       </div>
         <div className="flex gap-4">
           <div className="w-1/3">
             <MvpCard/>
@@ -27,6 +32,7 @@ const Home = () => {
       <div className="flex flex-col w-1/4 gap-2">
         <MiniTeamRanking/>
         <MiniPlayerRanking/>
+        <LikedPlayer/>
       </div>
     </div>
   </div>

@@ -30,8 +30,8 @@ return(
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="left-2" />
-        <CarouselNext className="right-2" />
+        <CarouselPrevious className="left-2 size-10 cursor-pointer" />
+        <CarouselNext className="right-2 size-10 cursor-pointer" />
       </Carousel>
 )}
 

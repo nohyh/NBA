@@ -12,4 +12,5 @@ router.post("/users/favoritePlayer/:playerId",authMiddleware, userController.fav
 router.post("/users/unfavoritePlayer/:playerId",authMiddleware, userController.unfavoritePlayer);
 router.post("/users/favoriteTeam/:teamId",authMiddleware, userController.favoriteTeam);
 router.post("/users/unfavoriteTeam/:teamId",authMiddleware, userController.unfavoriteTeam);
+router.put("/users/update",authMiddleware, userController.updateUser);
 module.exports = router;
