@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useState } from 'react'
+import { Skeleton } from "@/components/ui/skeleton"
 const TeamRank = () => {
   const navigate = useNavigate()
   const [leftType, setLeftType] = useState('east')
@@ -19,10 +20,18 @@ const TeamRank = () => {
   const [rightExpanded, setRightExpanded] = useState(true)
   const validtypes = ['east', 'west', 'pts', 'oppPts', 'offRating', 'defRating', 'reb', 'ast'];
   const validSeasons = ['2021-22', '2022-23', '2023-24', '2024-25', '2025-26'];
-  const { data: { teams: leftTeams = [] } = {} } = useTopTeam(leftType, leftSeason)
-  const { data: { teams: rightTeams = [] } = {} } = useTopTeam(rightType, rightSeason)
+  const { data: { teams: leftTeams = [] } = {},isLoading:leftIsLoading } = useTopTeam(leftType, leftSeason)
+  const { data: { teams: rightTeams = [] } = {},isLoading:rightIsLoading } = useTopTeam(rightType, rightSeason)
   const leftClass = leftExpanded ? 'flex-wrap justify-center w-1/2   rounded-3xl overflow-hidden shadow-xl mr-8' : 'hidden'
   const rightClass = rightExpanded ? 'flex-wrap justify-center w-1/2   rounded-3xl overflow-hidden shadow-xl mr-8' : 'hidden'
+  if(leftIsLoading || rightIsLoading){
+    return(
+      <div>
+        <Skeleton className="w-4/5 h-[160px] mx-auto mt-10 rounded-3xl" />
+        <Skeleton className="w-4/5 h-[600px] mx-auto mt-10 rounded-3xl" />
+      </div>
+    )
+  }
   return (
     <div className="flex justify-center">
       <div className="flex  justify-around w-4/5 my-10">

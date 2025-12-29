@@ -1,35 +1,37 @@
-import { useParams, useNavigate } from "react-router-dom"
+import { useParams } from "react-router-dom"
 import { usePlayer } from "../hooks/usePlayer"
 import { StarIcon } from "lucide-react"
-import { useState,useEffect } from "react"
+import { useState, useEffect } from "react"
 import { useAuth } from "../context/AuthContext"
 import { ToCm, ToKg } from "../utils/transform"
+import { useNavigate } from "react-router-dom"
 const Player = () => {
+    const navigate = useNavigate();
     const { playerId } = useParams()
     const { data: { player } = {} } = usePlayer(playerId);
     const { user, favoritePlayer, unfavoritePlayer } = useAuth()
     const [stared, setStared] = useState(user?.favoritePlayers?.some((p) => p.id === parseInt(playerId)))
-      useEffect(() => {
-  if (user?.favoritePlayers) {
-    setStared(user.favoritePlayers.some((p) => p.id === parseInt(playerId)))
-  }
-}, [user, playerId])
+    useEffect(() => {
+        if (user?.favoritePlayers) {
+            setStared(user.favoritePlayers.some((p) => p.id === parseInt(playerId)))
+        }
+    }, [user, playerId])
     if (!player || !player.seasonStats?.length) {
         return <div>Player not found</div>
     }
-    const handleStar = async() => {
+    const handleStar = async () => {
         const newStared = !stared
         setStared(newStared)
-        try{
-        if(newStared){
-            await favoritePlayer(playerId)
-        }else{
-            await unfavoritePlayer(playerId)
+        try {
+            if (newStared) {
+                await favoritePlayer(playerId)
+            } else {
+                await unfavoritePlayer(playerId)
+            }
+        } catch (error) {
+            setStared(!newStared)
+            console.log(error)
         }
-    }catch(error){
-        setStared(!newStared)
-        console.log(error)
-    }
     }
     return (
         <div className="flex flex-col">
@@ -49,27 +51,27 @@ const Player = () => {
                 </div>
                 <div className="flex w-full h-[150px] shadow-lg bg-black font-extrabold ">
                     <div className="flex flex-col text-white justify-center items-center w-1/6">
-                        <span className="text-xm"> 场均得分</span>
+                        <span className="text-xs"> 场均得分</span>
                         <span className="text-2xl">{player.seasonStats[0].pts}</span>
                     </div>
                     <div className="flex flex-col text-white justify-center items-center w-1/6">
-                        <span className="text-xm"> 场均篮板</span>
+                        <span className="text-xs"> 场均篮板</span>
                         <span className="text-2xl">{player.seasonStats[0].reb}</span>
                     </div>
                     <div className="flex flex-col text-white justify-center items-center w-1/6">
-                        <span className="text-xm"> 场均助攻</span>
+                        <span className="text-xs"> 场均助攻</span>
                         <span className="text-2xl">{player.seasonStats[0].ast}</span>
                     </div>
                     <div className="flex flex-col text-white justify-center items-center w-1/6 ">
-                        <span className="text-xm"> 身高</span>
-                        <span className="text-2xl">{ToCm(player.height)}CM</span>
+                        <span className="text-xs"> 身高</span>
+                        <span className="text-2xl">{ToCm(player.height)=== 'N/A'? 'N/A':`${ToCm(player.height)}CM`}</span>
                     </div>
                     <div className="flex flex-col text-white justify-center items-center w-1/6 ">
-                        <span className="text-xm"> 体重</span>
-                        <span className="text-2xl">{ToKg(player.weight)}KG</span>
+                        <span className="text-xs"> 体重</span>
+                        <span className="text-2xl">{ToKg(player.weight)=== 'N/A'? 'N/A':`${ToKg(player.weight)}KG`}</span>
                     </div>
                     <div className="flex flex-col text-white justify-center items-center w-1/6 ">
-                        <span className="text-xm"> 国家</span>
+                        <span className="text-xs"> 国家</span>
                         <span className="text-2xl">{player.country}</span>
                     </div>
                 </div>

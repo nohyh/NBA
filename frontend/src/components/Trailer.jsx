@@ -28,7 +28,7 @@ const Trailer = () => {
             <Carousel className="w-full">
                 <CarouselContent>
                 {teams.map((team) => (
-                    <CarouselItem className  key={team.id}>
+                    <CarouselItem key={team.id}>
                         <TeamNextTeam team={team} />
                     </CarouselItem>
                 ))}

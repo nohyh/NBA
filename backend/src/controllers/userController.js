@@ -4,6 +4,9 @@ const { signToken } = require("../utils/jwt");
 
 const signUp = async (req, res) => {
     try {
+        if(!req.body.user){
+            return  res.status(500).json({ message: "不能发送空信息" });
+        }
         const { username, password } = req.body.user;
         const isUserExist = await prisma.user.findFirst({
             where: {
@@ -31,6 +34,9 @@ const signUp = async (req, res) => {
 
 const signIn = async (req, res) => {
     try {
+        if(!req.body.user){
+            return  res.status(500).json({ message: "不能发送空信息" });
+        }
         const { username, password } = req.body.user;
         const user = await prisma.user.findUnique({
             where: {
@@ -194,6 +200,26 @@ const unfavoriteTeam = async (req, res) => {
 const updateUser = async (req, res) => {
     try {
         const { username, password, newPassword } = req.body;
+        if(!username){
+            return res.status(400).json({ message: "请输入用户名" })
+        }
+        const existingUser = await prisma.user.findUnique({
+            where: {
+                username: username
+            }
+        })
+        if (existingUser && existingUser.id !== req.user.id) {
+            return res.status(409).json({ message: "用户名已存在" })
+        }
+        if (newPassword && !password) {
+            return res.status(400).json({ message: "请输入原密码" })
+        }
+        if (!newPassword && password) {
+            return res.status(400).json({ message: "请输入新密码" })
+        }
+        if(newPassword===password){
+            return res.status(400).json({ message: "新密码与原密码相同" })
+        }
         if (newPassword && password) {
             const isPasswordValid = await bcrypt.compare(password, req.user.password)
             if (!isPasswordValid) {
@@ -207,9 +233,19 @@ const updateUser = async (req, res) => {
             data: {
                 username: username,
                 ...newPassword && { password: await bcrypt.hash(newPassword, 10) }
+            },
+            include: {
+                favoritePlayers:{
+                    include:{
+                        team:true,
+                        seasonStats:true
+                    }
+                },
+                favoriteTeams:true
             }
         })
-        res.status(200).json({ user: { username: user.username } });
+        delete user.password;
+        res.status(200).json({ user });
     }
     catch (error) {
         console.log(error);

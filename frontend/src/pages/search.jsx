@@ -3,17 +3,19 @@ import{Input} from "../components/ui/input"
 import { Button } from "../components/ui/button";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-const search =()=>{
+import { Skeleton } from "@/components/ui/skeleton";
+const Search =()=>{
     const navigate = useNavigate()
     const [input,setInput] = useState('')
     const [searchTerm,setSearchTerm] = useState('')
-    const {data:{players=[]}={}} = useSearchPlayer(searchTerm)
-    if(!players){
+    const {data:{players=[]}={},isLoading} = useSearchPlayer(searchTerm)
+    if(isLoading){
         return(
-            <div className="flex justify-center items-center h-screen">
-                <h1>Loading...</h1>
-            </div>
+            <Skeleton className="w-full h-full"/>
         )
+    }
+    if(players.length===0){
+        return <div>No data</div>
     }
     const handleSearch = async()=>{
          setSearchTerm(input)
@@ -43,4 +45,4 @@ const search =()=>{
         </div>
     )
 }
-export default search
+export default Search

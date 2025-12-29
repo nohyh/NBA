@@ -9,6 +9,7 @@ import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { useNavigate } from "react-router-dom"
 import { useTopPlayer } from "../hooks/usePlayer"
+import { Skeleton } from "@/components/ui/skeleton"
 const PlayerRank = () => {
     const navigate = useNavigate()
     const validSeasons = ['2021-22', '2022-23', '2023-24', '2024-25', '2025-26'];
@@ -18,13 +19,21 @@ const PlayerRank = () => {
     const [seasonType, setSeasonType] = useState('Regular Season');
     const [dataType, setDataType] = useState('pts');
     const [page, setPage] = useState(1)
-    const { data: { players = [], totalPlayers } = {} } = useTopPlayer(season, seasonType, dataType, page, 20)
+    const { data: { players = [], totalPlayers } = {},isLoading } = useTopPlayer(season, seasonType, dataType, page, 20)
+    if(isLoading){
+      return(
+        <div>
+          <Skeleton className="w-4/5 h-[160px] mx-auto mt-10 rounded-3xl" />
+          <Skeleton className="w-4/5 h-[600px] mx-auto mt-10 rounded-3xl" />
+        </div>
+      )
+    }
     return (
         <>
             <div className="flex w-4/5 h-[160px] items-center rounded-3xl overflow-hidden shadow-xl bg-white mx-auto mt-10  gap-2">
                 <div className="flex flex-col ml-5 w-1/4 gap-3 ">
                     Season
-                    <Select defaultValue={season} onValueChange={(value) => setSeason(value)}>
+                    <Select defaultValue={season} onValueChange={(value) => {setSeason(value);setPage(1)}}>
                         <SelectTrigger className="w-[250px]">
                             <SelectValue />
                         </SelectTrigger>
@@ -39,7 +48,7 @@ const PlayerRank = () => {
                 </div>
                 <div className="flex flex-col w-1/4 gap-3">
                     SeasonType
-                    <Select defaultValue={seasonType} onValueChange={(value) => setSeasonType(value)}>
+                    <Select defaultValue={seasonType} onValueChange={(value) => {setSeasonType(value);setPage(1)}}>
                         <SelectTrigger className="w-[250px]">
                             <SelectValue />
                         </SelectTrigger>
@@ -54,7 +63,7 @@ const PlayerRank = () => {
                 </div>
                 <div className="flex flex-col w-1/4 gap-3">
                     DataType
-                    <Select defaultValue={dataType} onValueChange={(value) => setDataType(value)}>
+                    <Select defaultValue={dataType} onValueChange={(value) => {setDataType(value);setPage(1)}}>
                         <SelectTrigger className="w-[250px]">
                             <SelectValue />
                         </SelectTrigger>

@@ -1,5 +1,5 @@
 // components/app-sidebar.tsx
-import { Calendar, Home, Inbox, Search, Settings, Trophy ,BarChart3,User} from "lucide-react";
+import { Calendar, Home, Search, Trophy ,BarChart3} from "lucide-react";
 import { Link } from "react-router-dom"
 
 import {

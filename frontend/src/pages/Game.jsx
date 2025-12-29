@@ -1,6 +1,5 @@
 import { useParams } from "react-router-dom"
 import {useGameDetail} from "../hooks/useGame"
-import { useTeamById } from "../hooks/useTeam";
 import {GameCardPlus} from "@/components/GameCard";
 const Game=()=>{
     const {gameId} =useParams()
@@ -21,7 +20,7 @@ const Game=()=>{
                         <span className="w-1/6">第二节</span>
                         <span className="w-1/6">第三节</span>
                         <span className="w-1/6">第四节</span>
-                        <spam className="w-1/6"> 总分</spam>
+                        <span className="w-1/6"> 总分</span>
                     </div>
                     <div className="flex flex-col w-full justify-center gap-2">
                        <div className="flex">

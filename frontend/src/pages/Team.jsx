@@ -29,7 +29,6 @@ const Team = () => {
         gameDate.setHours(0,0,0,0);
         return gameDate>=today;
     })??0;
-    const startIndex =todayIndex-2;
     const handleStar = async() => {
         const newStared = !stared
         setStared(newStared)

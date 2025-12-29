@@ -5,8 +5,8 @@ import { CalendarIcon } from "lucide-react"
 import { useMemo, useEffect, useState } from "react"
 import {useGameByDate} from "../hooks/useGame"
 import{GameCard} from "../components/GameCard"
+import { Skeleton } from "@/components/ui/skeleton"
 const GameCalendar =()=>{
-
     const week =['星期一','星期二','星期三','星期四','星期五','星期六','星期日']
     const [date, setDate] = useState(new Date())
     const [selectedDate, setSelectedDate] = useState(new Date())
@@ -34,8 +34,15 @@ const GameCalendar =()=>{
       setSelectedDate(date)
     },[date])
 
-    const {data:{games=[]}={}} =useGameByDate(date)
-
+    const {data:{games=[]}={},isLoading} =useGameByDate(date)
+   if (isLoading) {
+    return (
+        <div>
+            <Skeleton className="w-4/5 h-[160px] mx-auto mt-10 rounded-3xl" />
+            <Skeleton className="w-4/5 h-[600px] mx-auto mt-10 rounded-3xl" />
+        </div>
+    )
+}
     return(
     <div>
         <div className="flex w-4/5 h-[160px] items-center justify-center rounded-3xl overflow-hidden shadow-xl bg-white mx-auto mt-10  gap-2">
@@ -68,7 +75,7 @@ const GameCalendar =()=>{
 })}>{'<'}</Button>
             <div className="flex gap-2">
                 {weekDates.map((item,index)=>(
-                  <Button  key={item}  variant="ghost" onClick={()=>setDate(item)}>
+                  <Button  key={item}  variant="ghost" onClick={()=>setDate(item)} className={item.toDateString()===date.toDateString()?"bg-blue-200":""}>
                     <div className="flex flex-col items-center">
                       <p>{week[index]}</p>
                     <p>{item.getDate()}</p>

@@ -5,45 +5,24 @@ const ALL_TYPES = [
     'fgPct', 'tppPct', 'ftPct', 'fgm', 'fga', 'fg3m', 'fg3a', 'ftm', 'fta',
     'oreb', 'dreb', 'eff', 'astTov', 'stlTov'
 ]
-const getPlayers = async (req, res) => {
-    try {
-        const { limit = 20, offset = 0, search = "" } = req.query;
-        //if search exists then search in name
-        const where = search ? {
-            fullName: {
-                contains: search,
-            }
-        } : {};
-        const players = await prisma.player.findMany({
-            where,
-            orderBy: { fullName: 'asc' },
-            take: parseInt(limit),
-            skip: parseInt(offset),
-            include: {
-                seasonStats: true,
-                team: true
-            }
-        })
-        const totalPlayers = await prisma.player.count({ where });
-        return res.status(200).json({ players, totalPlayers });
-    }
-    catch (error) {
-        console.log(error);
-        return res.status(500).json({ message: error.message });
-    }
-}
+
 const getPlayerById = async (req, res) => {
+
     try {
         const player = await prisma.player.findUnique({
             where: { id: parseInt(req.params.id) },
             include: {
-                seasonStats: true,
+                seasonStats: {
+                    orderBy: {
+                        season: "desc"
+                    }
+                },
                 team: true,
-                gameLogs:{
-                    orderBy:{
-                        gameDate:"desc"
+                gameLogs: {
+                    orderBy: {
+                        gameDate: "desc"
                     },
-                    take:5
+                    take: 5
                 }
             }
         })
@@ -63,6 +42,9 @@ const getLeaders = async (req, res) => {
         const { type, limit } = req.query;
         if (!type || !limit) {
             return res.status(400).json({ message: "Missing type or limit" });
+        }
+        if (!ALL_TYPES.includes(type) && type != "all") {
+            return res.status(400).json({ message: "Invalid type" })
         }
         let types;
         if (type === 'all') {
@@ -98,17 +80,18 @@ const mvpOfToday = async (req, res) => {
     try {
         const playerOfToday = await prisma.playerGameLog.findMany({
             where: {
-                   gameDate: {
+                gameDate: {
                     gte: new Date(dateStr + 'T00:00:00'),
                     lt: new Date(dateStr + 'T23:59:59')
-    }
+                }
             },
             include: {
                 player: true
             }
         })
         if (playerOfToday.length === 0) {
-            return res.status(404).json({ message: "No player found" });
+
+            return res.status(200).json({ mvp: null });
         }
         const mvp = playerOfToday.reduce((prev, curr) => {
             const getScore = (p) => (p.pts || 0) + (p.ast || 0) * 1.2 + (p.reb || 0) + ((p.stl || 0) + (p.blk || 0)) * 2 - (p.tov || 0) * 1.5;
@@ -122,85 +105,91 @@ const mvpOfToday = async (req, res) => {
     }
 }
 
-const getTopPlayer =async(req,res)=>{
-    try{
-        const  page =parseInt(req.query.page);
-        const  limit  =parseInt(req.query.limit);
-        const season =req.query.season;
-        const seasonType =req.query.seasonType;
-        const dataType =req.query.dataType;
-        const players =await prisma.playerSeasonStat.findMany({
-            where:{
-                season:season,
-                seasonType:seasonType
+const getTopPlayer = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page);
+        const limit = parseInt(req.query.limit);
+        const season = req.query.season;
+        const seasonType = req.query.seasonType;
+        const dataType = req.query.dataType;
+        if (!page || !limit || !season || !seasonType || !dataType) {
+            return res.status(400).json({ message: "Missing parameters" })
+        }
+        if (!ALL_TYPES.includes(dataType)) {
+            return res.status(400).json({ message: "Invalid data type" })
+        }
+        const players = await prisma.playerSeasonStat.findMany({
+            where: {
+                season: season,
+                seasonType: seasonType
             },
-            orderBy:{
-                [dataType]:"desc"
+            orderBy: {
+                [dataType]: "desc"
             },
-            include:{
-                player:{
-                    include:{
-                        team:true
+            include: {
+                player: {
+                    include: {
+                        team: true
                     }
                 }
 
             },
-            take:parseInt(limit),
-            skip:parseInt((page-1)*limit)
+            take: parseInt(limit),
+            skip: parseInt((page - 1) * limit)
         })
-        const totalPlayers =await prisma.playerSeasonStat.count({
-            where:{ 
-                season:season,
-                seasonType:seasonType
+        const totalPlayers = await prisma.playerSeasonStat.count({
+            where: {
+                season: season,
+                seasonType: seasonType
             }
         })
         res.status(200).json({ players, totalPlayers });
 
     }
-    catch(error){
+    catch (error) {
         console.log(error);
         return res.status(500).json({ message: error.message });
     }
 }
 
-const getPlayerByTeam =async(req,res)=>{
-    try{
-        const teamId =parseInt(req.params.teamId);
-        const players =await prisma.player.findMany({
-            where:{
-                teamId:teamId
+const getPlayerByTeam = async (req, res) => {
+    try {
+        const teamId = parseInt(req.params.teamId);
+        const players = await prisma.player.findMany({
+            where: {
+                teamId: teamId
             },
-            include:{
-                seasonStats:true
+            include: {
+                seasonStats: true
             }
         })
         res.status(200).json({ players });
     }
-    catch(error){
+    catch (error) {
         console.log(error);
         return res.status(500).json({ message: error.message });
     }
 }
 
-const searchPlayer =async(req,res)=>{
-    try{
-        const search =req.query.search;
-        const players =await prisma.player.findMany({
-            where:{
-                fullName:{
-                    contains:search
+const searchPlayer = async (req, res) => {
+    try {
+        const search = req.query.search;
+        const players = await prisma.player.findMany({
+            where: {
+                fullName: {
+                    contains: search
                 }
             },
-            include:{
-                team:true
+            include: {
+                team: true
             }
         })
         res.status(200).json({ players });
     }
-    catch(error){
+    catch (error) {
         console.log(error);
         return res.status(500).json({ message: error.message });
     }
 }
 
-module.exports = { getPlayers, getPlayerById, getLeaders, mvpOfToday,getTopPlayer,getPlayerByTeam,searchPlayer }
+module.exports = { getPlayerById, getLeaders, mvpOfToday, getTopPlayer, getPlayerByTeam, searchPlayer }

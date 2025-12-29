@@ -1,23 +1,8 @@
 const prisma = require("../utils/prisma");
 const validtypes = ['pts', 'oppPts', 'offRating', 'defRating', 'reb', 'ast', 'east', 'west'];
-const getTeams = async (req, res) => {
-    try {
-        const teams = await prisma.team.findMany({
-            include: {
-                players: true
-            }
-        })
-        if (!teams) {
-            return res.status(404).json({ message: "No teams found" });
-        }
-        return res.status(200).json({ teams });
-    }
-    catch (error) {
-        console.log(error);
-        return res.status(500).json({ message: error.message });
-    }
-}
+
 const getTeamById = async (req, res) => {
+
     try {
         const team = await prisma.team.findUnique({
             where: {
@@ -113,4 +98,4 @@ const getTopTeam = async (req, res) => {
     }
 }
 
-module.exports = { getTeams, getTeamById, getTopTeam };
+module.exports = { getTeamById, getTopTeam };

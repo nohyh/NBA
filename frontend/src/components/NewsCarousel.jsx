@@ -1,8 +1,13 @@
 import { Carousel, CarouselContent, CarouselItem ,CarouselNext,CarouselPrevious} from "@/components/ui/carousel"
 import {useNews} from "@/hooks/useNews";
+import { Skeleton } from "@/components/ui/skeleton"
 const NewsCarousel = () => {
-    const {data:news} = useNews();
-    if(!news) return null;//这里可以换成骨架
+    const {data:news,isLoading} = useNews();
+    if(isLoading) return (
+      <div>
+        <Skeleton className="w-full h-[400px] mx-auto mt-10 rounded-3xl" />
+      </div>
+    );
     return (
         <div className="flex w-full h-[400px] rounded-3xl overflow-hidden shadow-xl">
         <Carousel opts={{

@@ -17,15 +17,15 @@ const MiniTeamRanking = () => {
                     <div className="flex flex-col items-center">
                         <h3 className="font-bold">EAST</h3>
                         <div>
-                            {east.map((team) => (
+                            {east.map((seasonStat) => (
                                 <div
-                                    key={team.id}
+                                    key={seasonStat.id}
                                     className="flex items-center cursor-pointer hover:bg-gray-100 p-1 rounded"
-                                    onClick={() => navigate(`/team/${team.team.id}`)}
+                                    onClick={() => navigate(`/team/${seasonStat.team.id}`)}
                                 >
-                                    <img src={team.team.logoUrl} alt={team.team.name} className="w-10 h-10" />
-                                    <span className="mr-2">{team.team.name}</span>
-                                    <span>{team.team.wins}-{team.team.losses}</span>
+                                    <img src={seasonStat.team.logoUrl} alt={seasonStat.team.name} className="w-10 h-10" />
+                                    <span className="mr-2">{seasonStat.team.name}</span>
+                                    <span>{seasonStat.team.wins}-{seasonStat.team.losses}</span>
                                 </div>
                             ))}
                         </div>
@@ -34,15 +34,15 @@ const MiniTeamRanking = () => {
                     <div className="flex flex-col items-center">
                         <h3 className="font-bold">WEST</h3>
                         <div>
-                            {west.map((team) => (
+                            {west.map((seasonStat) => (
                                 <div
-                                    key={team.id}
+                                    key={seasonStat.id}
                                     className="flex items-center cursor-pointer hover:bg-gray-100 p-1 rounded"
-                                    onClick={() => navigate(`/team/${team.team.id}`)}
+                                    onClick={() => navigate(`/team/${seasonStat.team.id}`)}
                                 >
-                                    <img src={team.team.logoUrl} alt={team.team.name} className="w-10 h-10" />
-                                    <span className="mr-2">{team.team.name}</span>
-                                    <span>{team.team.wins}-{team.team.losses}</span>
+                                    <img src={seasonStat.team.logoUrl} alt={seasonStat.team.name} className="w-10 h-10" />
+                                    <span className="mr-2">{seasonStat.team.name}</span>
+                                    <span>{seasonStat.team.wins}-{seasonStat.team.losses}</span>
                                 </div>
                             ))}
                         </div>

@@ -1,7 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card"
-import { useGameByDate} from "../hooks/useGame"
-import {useTopTeam} from "../hooks/useTeam"
-import {getETDate} from "../utils/date"
 import GameCarousel from "../components/GameCarousel"
 import MiniTeamRanking from "../components/MiniTeamRanking"
 import MiniPlayerRanking from "../components/MiniPlayerRanking"

@@ -91,6 +91,7 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (!token) {
+            setLoading(false);
             return;
         }
         const fetchUser = async () => {
@@ -100,12 +101,14 @@ export const AuthProvider = ({ children }) => {
             } catch (error) {
                 console.log(error);
                 signOut();
+            }finally{
+                setLoading(false);
             }
         }
         fetchUser();
     }, [])
     return (
-        <AuthContext.Provider value={{ user, signIn, signUp, signOut, checkUsername, favoritePlayer, unfavoritePlayer, favoriteTeam, unfavoriteTeam, update }}>
+        <AuthContext.Provider value={{ user,loading, signIn, signUp, signOut, checkUsername, favoritePlayer, unfavoritePlayer, favoriteTeam, unfavoriteTeam, update }}>
             {children}
         </AuthContext.Provider>
     )
