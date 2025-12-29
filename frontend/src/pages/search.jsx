@@ -14,9 +14,6 @@ const Search =()=>{
             <Skeleton className="w-full h-full"/>
         )
     }
-    if(players.length===0){
-        return <div>No data</div>
-    }
     const handleSearch = async()=>{
          setSearchTerm(input)
     }
