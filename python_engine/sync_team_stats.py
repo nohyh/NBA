@@ -8,14 +8,14 @@
   python sync_team_stats.py --all        # 同步最近5个赛季
 """
 import sqlite3
-import os
 import sys
 from nba_api.stats.endpoints import LeagueDashTeamStats
 from nba_api.stats.static import teams
 import time
+from db_utils import get_db_path
 
 # 数据库路径
-db_path = os.path.join(os.path.dirname(__file__), "../backend/prisma/dev.db")
+db_path = get_db_path()
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 print(f"已连接到数据库: {db_path}")

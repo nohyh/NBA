@@ -1,19 +1,21 @@
 import sqlite3
-import os
 from nba_api.stats.endpoints import leaguedashplayerstats
+from db_utils import get_db_path
+
+SEASON = "2025-26"
 
 # 1. 连接数据库 (Prisma 7.x 在 backend 根目录创建 dev.db)
-db_path = os.path.join(os.path.dirname(__file__), '../backend/dev.db')
+db_path = get_db_path()
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 
 print(f"Connected to: {db_path}")
-print("Fetching 2024-25 season player stats (PerGame)...")
+print(f"Fetching {SEASON} season player stats (PerGame)...")
 
 try:
     # 获取所有球员赛季数据 - 使用 PerGame 模式获取场均数据
     stats = leaguedashplayerstats.LeagueDashPlayerStats(
-        season='2024-25',
+        season=SEASON,
         per_mode_detailed='PerGame'  # 关键！获取场均数据而非总数据
     )
     result_set = stats.get_dict()['resultSets'][0]
@@ -33,8 +35,8 @@ try:
     print("Key field indices:", {k: idx.get(k) for k in key_fields})
     
     # 先清空旧数据
-    cursor.execute("DELETE FROM PlayerSeasonStat WHERE season = '2024-25'")
-    print("Cleared old 2024-25 season data.")
+    cursor.execute("DELETE FROM PlayerSeasonStat WHERE season = ?", (SEASON,))
+    print(f"Cleared old {SEASON} season data.")
     
     success_count = 0
     skip_count = 0
@@ -61,8 +63,8 @@ try:
             cursor.execute('''
                 INSERT INTO PlayerSeasonStat 
                 (playerId, season, gamesPlayed, pts, reb, ast, stl, blk, fgPct, tppPct, ftPct, updatedAt)
-                VALUES (?, '2024-25', ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
-            ''', (player_id, gp, pts, reb, ast, stl, blk, fg_pct, fg3_pct, ft_pct))
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+            ''', (player_id, SEASON, gp, pts, reb, ast, stl, blk, fg_pct, fg3_pct, ft_pct))
             
             success_count += 1
         else:
@@ -78,10 +80,10 @@ try:
         SELECT p.fullName, s.pts, s.reb, s.ast, s.gamesPlayed
         FROM PlayerSeasonStat s
         JOIN Player p ON s.playerId = p.id
-        WHERE s.season = '2024-25'
+        WHERE s.season = ?
         ORDER BY s.pts DESC
         LIMIT 5
-    ''').fetchall()
+    ''', (SEASON,)).fetchall()
     
     for i, (name, pts, reb, ast, gp) in enumerate(top, 1):
         print(f"  {i}. {name}: {pts:.1f} PPG, {reb:.1f} RPG, {ast:.1f} APG ({gp} games)")

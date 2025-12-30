@@ -1,11 +1,11 @@
 import sqlite3
-import os
 from nba_api.stats.endpoints import leaguestandings
 from nba_api.stats.static import players
+from db_utils import get_db_path
 
 # 1. 连接数据库 (注意路径是相对于当前脚本的)
 # Prisma 7.x 在 backend 根目录创建 dev.db
-db_path = os.path.join(os.path.dirname(__file__), '../backend/prisma/dev.db')
+db_path = get_db_path()
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 

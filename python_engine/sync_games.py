@@ -3,12 +3,12 @@
 使用 NBA 官方 CDN 赛程 API 获取完整赛季数据
 """
 import sqlite3
-import os
 import requests
 from datetime import datetime
+from db_utils import get_db_path
 
 # 连接数据库
-db_path = os.path.join(os.path.dirname(__file__), '../backend/prisma/dev.db')
+db_path = get_db_path()
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 

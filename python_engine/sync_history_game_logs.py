@@ -3,13 +3,13 @@
 从 Game 表读取已结束比赛，然后从 NBA API 获取 box score
 """
 import sqlite3
-import os
 import time
 from datetime import datetime
 from nba_api.stats.endpoints import BoxScoreTraditionalV2
+from db_utils import get_db_path
 
 # 连接数据库
-db_path = os.path.join(os.path.dirname(__file__), '../backend/prisma/dev.db')
+db_path = get_db_path()
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 

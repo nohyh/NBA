@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom"
 import { useTopPlayer } from "../hooks/usePlayer"
 import { ChevronLeft, ChevronRight, Trophy } from "lucide-react"
 
-const SEASONS = ['2024-25', '2023-24', '2022-23', '2021-22']
+const SEASONS = ['2025-26', '2024-25', '2023-24', '2022-23', '2021-22']
 const SEASON_TYPES = ['Regular Season', 'Playoffs']
 const DATA_TYPES = [
     { value: 'pts', label: '得分' },
@@ -30,7 +30,7 @@ const DATA_TYPES = [
 
 const PlayerRank = () => {
     const navigate = useNavigate()
-    const [season, setSeason] = useState('2024-25')
+    const [season, setSeason] = useState('2025-26')
     const [seasonType, setSeasonType] = useState('Regular Season')
     const [dataType, setDataType] = useState('pts')
     const [page, setPage] = useState(1)

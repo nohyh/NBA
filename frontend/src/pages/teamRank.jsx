@@ -13,7 +13,7 @@ import {
 import { useState } from 'react'
 import { Trophy, TrendingUp } from "lucide-react"
 
-const SEASONS = ['2024-25', '2023-24', '2022-23', '2021-22']
+const SEASONS = ['2025-26', '2024-25', '2023-24', '2022-23', '2021-22']
 const STAT_TYPES = [
   { value: 'pts', label: '得分' },
   { value: 'oppPts', label: '失分' },
@@ -105,7 +105,7 @@ const StatTable = ({ teams, statType, navigate }) => (
 
 const TeamRank = () => {
   const navigate = useNavigate()
-  const [season, setSeason] = useState('2024-25')
+  const [season, setSeason] = useState('2025-26')
   const [statType, setStatType] = useState('pts')
 
   const { data: { teams: east = [] } = {} } = useTopTeam('east', season)

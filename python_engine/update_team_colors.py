@@ -3,6 +3,7 @@
 """
 import sqlite3
 import os
+from db_utils import get_db_path
 
 # 30 支 NBA 球队的主色调 (按球队名称关键词匹配)
 TEAM_COLORS = {
@@ -39,8 +40,7 @@ TEAM_COLORS = {
 }
 
 def update_team_colors():
-    db_path = os.path.join(os.path.dirname(__file__), "..", "backend", "prisma", "dev.db")
-    db_path = os.path.abspath(db_path)
+    db_path = get_db_path()
     
     print(f"数据库路径: {db_path}")
     

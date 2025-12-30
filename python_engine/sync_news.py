@@ -3,12 +3,12 @@
 使用 ESPN 免费公开 API
 """
 import sqlite3
-import os
 import requests
 from datetime import datetime
+from db_utils import get_db_path
 
 # 连接数据库
-db_path = os.path.join(os.path.dirname(__file__), '../backend/prisma/dev.db')
+db_path = get_db_path()
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 

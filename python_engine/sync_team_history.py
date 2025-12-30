@@ -6,12 +6,12 @@
   python sync_team_history.py
 """
 import sqlite3
-import os
 from nba_api.stats.endpoints import FranchiseHistory
 import time
+from db_utils import get_db_path
 
 # 数据库路径
-db_path = os.path.join(os.path.dirname(__file__), "../backend/prisma/dev.db")
+db_path = get_db_path()
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 print(f"已连接到数据库: {db_path}")

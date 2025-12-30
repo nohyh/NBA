@@ -7,14 +7,14 @@
   python sync_player_profiles.py --test 5  # 只测试前 5 个
 """
 import sqlite3
-import os
 import sys
 import time
 from nba_api.stats.endpoints import commonplayerinfo
 from nba_api.stats.static import players
+from db_utils import get_db_path
 
 # 连接数据库
-db_path = os.path.join(os.path.dirname(__file__), '../backend/prisma/dev.db')
+db_path = get_db_path()
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 

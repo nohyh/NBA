@@ -2,10 +2,10 @@
 更新比赛比分 - 使用 NBA Live API
 """
 import sqlite3
-import os
 from nba_api.live.nba.endpoints import scoreboard
+from db_utils import get_db_path
 
-db_path = os.path.join(os.path.dirname(__file__), '../backend/prisma/dev.db')
+db_path = get_db_path()
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 

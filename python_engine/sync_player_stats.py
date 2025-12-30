@@ -9,13 +9,13 @@
   python sync_player_stats.py 2023-24 Playoffs  # 同步指定赛季季后赛
 """
 import sqlite3
-import os
 import sys
 import time
 from nba_api.stats.endpoints import leagueleaders
+from db_utils import get_db_path
 
 # 连接数据库
-db_path = os.path.join(os.path.dirname(__file__), '../backend/prisma/dev.db')
+db_path = get_db_path()
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 
