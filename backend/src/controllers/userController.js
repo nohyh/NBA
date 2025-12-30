@@ -5,7 +5,7 @@ const { signToken } = require("../utils/jwt");
 const signUp = async (req, res) => {
     try {
         if(!req.body.user){
-            return  res.status(500).json({ message: "不能发送空信息" });
+            return  res.status(400).json({ message: "不能发送空信息" });
         }
         const { username, password } = req.body.user;
         const isUserExist = await prisma.user.findFirst({
@@ -35,7 +35,7 @@ const signUp = async (req, res) => {
 const signIn = async (req, res) => {
     try {
         if(!req.body.user){
-            return  res.status(500).json({ message: "不能发送空信息" });
+            return  res.status(400).json({ message: "不能发送空信息" });
         }
         const { username, password } = req.body.user;
         const user = await prisma.user.findUnique({
@@ -217,10 +217,10 @@ const updateUser = async (req, res) => {
         if (!newPassword && password) {
             return res.status(400).json({ message: "请输入新密码" })
         }
-        if(newPassword===password){
-            return res.status(400).json({ message: "新密码与原密码相同" })
-        }
         if (newPassword && password) {
+             if(newPassword===password){
+            return res.status(400).json({ message: "新密码与原密码相同" })
+            }
             const isPasswordValid = await bcrypt.compare(password, req.user.password)
             if (!isPasswordValid) {
                 return res.status(401).json({ message: "密码输入错误" })

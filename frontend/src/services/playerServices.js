@@ -1,10 +1,4 @@
 import apiClient from "../api/apiClient";
-const ALL_TYPES = [
-    'pts', 'reb', 'ast', 'stl', 'blk', 'tov', 'min',
-    'fgPct', 'tppPct', 'ftPct', 'fgm', 'fga', 'fg3m', 'fg3a', 'ftm', 'fta',
-    'oreb', 'dreb', 'eff', 'astTov', 'stlTov'
-]
-
 const getLeaders = async (type, limit) => {
     const response = await apiClient.get(`/players/leaders?type=${type}&limit=${limit}`);
     return response.data;

@@ -1,7 +1,6 @@
 const express = require('express')
 const cors = require('cors')
 const app = express();
-const authMiddleware = require('./middleware/auth');
 app.use(cors({
     origin: process.env.FRONTEND_URL || 'http://localhost:5173'
 }));

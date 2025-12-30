@@ -25,10 +25,10 @@ const Team = () => {
     }
     const conference = team.conference=="East" ? "东部" : "西部";
     const today =new Date().setHours(0,0,0,0);
-    const todayIndex =games?.findIndex((game) =>{const gameDate =new Date(game.gameDate);
+    const todayIndex =Math.max(0,games?.findIndex((game) =>{const gameDate =new Date(game.gameDate);
         gameDate.setHours(0,0,0,0);
         return gameDate>=today;
-    })??0;
+    })??0);
     const handleStar = async() => {
         const newStared = !stared
         setStared(newStared)
