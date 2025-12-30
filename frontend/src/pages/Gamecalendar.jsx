@@ -1,99 +1,153 @@
-import { Calendar} from "@/components/ui/calendar"
-import {Popover,PopoverContent,PopoverTrigger } from "@/components/ui/popover"
+import { Calendar } from "@/components/ui/calendar"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
-import { CalendarIcon } from "lucide-react"
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import { CalendarIcon, ChevronLeft, ChevronRight, RotateCcw } from "lucide-react"
 import { useMemo, useEffect, useState } from "react"
-import {useGameByDate} from "../hooks/useGame"
-import{GameCard} from "../components/GameCard"
-const GameCalendar =()=>{
+import { useGameByDate } from "../hooks/useGame"
+import { GameCard } from "../components/GameCard"
 
-    const week =['星期一','星期二','星期三','星期四','星期五','星期六','星期日']
-    const [date, setDate] = useState(new Date())
-    const [selectedDate, setSelectedDate] = useState(new Date())
-    const [open, setOpen] = useState(false)
-    const monday = useMemo(() => {
-    const m = new Date(selectedDate);
-    const dayOfWeek = selectedDate.getDay() || 7; 
-    m.setDate(selectedDate.getDate() - dayOfWeek + 1);
-    return m;
-}, [selectedDate]);
-    const{year,month} =useMemo(()=>({
-        year:monday.getFullYear(),
-        month:monday.getMonth()+1,
-    }),[monday])
-    const weekDates =useMemo(()=>{
-      const dates =[]
-      for(let i=0;i<7;i++){
-        const d = new Date(monday)
-        d.setDate(monday.getDate()+i);
-        dates.push(d);
-      }
-      return dates;
-    },[monday])
-    useEffect(()=>{
-      setSelectedDate(date)
-    },[date])
+const WEEKDAYS = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
 
-    const {data:{games=[]}={}} =useGameByDate(date)
+const GameCalendar = () => {
+  const [date, setDate] = useState(new Date())
+  const [selectedDate, setSelectedDate] = useState(new Date())
+  const [open, setOpen] = useState(false)
 
-    return(
-    <div>
-        <div className="flex w-4/5 h-[160px] items-center justify-center rounded-3xl overflow-hidden shadow-xl bg-white mx-auto mt-10  gap-2">
-        <div className="flex ">
-          <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger asChild>
-            <Button id="date-picker"variant="ghost" className="gap-2">
-                <p>{year}年{month}月</p>
-              <CalendarIcon className="size-5" />
-              <span className="sr-only">Select date</span>
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto overflow-hidden p-0" align="end">
-            <Calendar
-              mode="single"
-              selected={date}
-              captionLayout="dropdown"  
-              onSelect={(d)=>setDate(d||date)}
-              fromYear={2021}
-              toYear={2026}
-            />
-          </PopoverContent>
-        </Popover>
-        </div>
-        <div className="flex">
-            <Button variant="ghost" onClick={()=>setSelectedDate(prev => {
-    const newDate = new Date(prev);
-    newDate.setDate(newDate.getDate() - 7);
-    return newDate;
-})}>{'<'}</Button>
-            <div className="flex gap-2">
-                {weekDates.map((item,index)=>(
-                  <Button  key={item}  variant="ghost" onClick={()=>setDate(item)}>
-                    <div className="flex flex-col items-center">
-                      <p>{week[index]}</p>
-                    <p>{item.getDate()}</p>
-                    </div>
+  const monday = useMemo(() => {
+    const m = new Date(selectedDate)
+    const dayOfWeek = selectedDate.getDay() || 7
+    m.setDate(selectedDate.getDate() - dayOfWeek + 1)
+    return m
+  }, [selectedDate])
+
+  const { year, month } = useMemo(() => ({
+    year: monday.getFullYear(),
+    month: monday.getMonth() + 1,
+  }), [monday])
+
+  const weekDates = useMemo(() => {
+    const dates = []
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(monday)
+      d.setDate(monday.getDate() + i)
+      dates.push(d)
+    }
+    return dates
+  }, [monday])
+
+  useEffect(() => {
+    setSelectedDate(date)
+  }, [date])
+
+  const { data: { games = [] } = {} } = useGameByDate(date)
+
+  const isToday = (d) => {
+    const today = new Date()
+    return d.toDateString() === today.toDateString()
+  }
+
+  const isSelected = (d) => d.toDateString() === date.toDateString()
+
+  return (
+    <div className="space-y-6">
+      {/* 日期选择器 */}
+      <Card className="border bg-white/85 shadow-sm">
+        <CardContent className="p-4">
+          <div className="flex flex-wrap items-center gap-4">
+            {/* 月份选择 */}
+            <Popover open={open} onOpenChange={setOpen}>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="gap-2">
+                  <CalendarIcon className="w-4 h-4" />
+                  {year}年{month}月
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  captionLayout="dropdown"
+                  onSelect={(d) => { setDate(d || date); setOpen(false) }}
+                  fromYear={2021}
+                  toYear={2026}
+                />
+              </PopoverContent>
+            </Popover>
+
+            {/* 周选择器 */}
+            <div className="flex flex-wrap items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setSelectedDate(prev => {
+                  const newDate = new Date(prev)
+                  newDate.setDate(newDate.getDate() - 7)
+                  return newDate
+                })}
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </Button>
+
+              <div className="flex gap-1">
+                {weekDates.map((item, index) => (
+                  <Button
+                    key={item.toISOString()}
+                    variant={isSelected(item) ? "default" : isToday(item) ? "outline" : "ghost"}
+                    className="flex flex-col h-auto min-w-[60px] rounded-xl px-3 py-2"
+                    onClick={() => setDate(item)}
+                  >
+                    <span className="text-xs">{WEEKDAYS[index]}</span>
+                    <span className="text-lg font-bold">{item.getDate()}</span>
                   </Button>
                 ))}
+              </div>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setSelectedDate(prev => {
+                  const newDate = new Date(prev)
+                  newDate.setDate(newDate.getDate() + 7)
+                  return newDate
+                })}
+              >
+                <ChevronRight className="w-4 h-4" />
+              </Button>
             </div>
-            <Button variant="ghost" onClick={()=>setSelectedDate(prev => {
-    const newDate = new Date(prev);
-    newDate.setDate(newDate.getDate() + 7);
-    return newDate;
-})}>{'>'}</Button>
-        </div>
-        <Button variant="ghost" className="bg-gray-200" onClick={()=>setDate(new Date())}> RESET</Button>
-        </div>
-        <div className="flex flex-wrap w-4/5  items-center justify-center rounded-3xl overflow-hidden shadow-xl bg-white mx-auto mt-10  gap-10">
-          {games.length>0?(games.map((game)=>(
-                <div className="flex w-1/4 mb-10" key={game.id}>
-                  <GameCard game={game}/>
-                </div>
-            ))):(
-              <p className=" flex items-center justify-center text-2xl h-[40vh]">今天无比赛</p>
-            )}
-        </div>
+
+            {/* 重置按钮 */}
+            <Button variant="outline" onClick={() => setDate(new Date())}>
+              <RotateCcw className="w-4 h-4 mr-2" />
+              今天
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* 比赛列表 */}
+      <Card className="border bg-white/85 shadow-sm">
+        <CardHeader>
+          <CardTitle className="text-base">
+            {date.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', weekday: 'long' })}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {games.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {games.map((game) => (
+                <GameCard key={game.id} game={game} />
+              ))}
+            </div>
+          ) : (
+            <div className="flex items-center justify-center h-48 text-muted-foreground">
+              当日无比赛安排
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
-    )
+  )
 }
+
 export default GameCalendar

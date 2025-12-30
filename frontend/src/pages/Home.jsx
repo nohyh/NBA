@@ -1,7 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card"
-import { useGameByDate} from "../hooks/useGame"
-import {useTopTeam} from "../hooks/useTeam"
-import {getETDate} from "../utils/date"
 import GameCarousel from "../components/GameCarousel"
 import MiniTeamRanking from "../components/MiniTeamRanking"
 import MiniPlayerRanking from "../components/MiniPlayerRanking"
@@ -10,32 +6,28 @@ import NewsCarousel from "../components/NewsCarousel"
 import News from "../components/News"
 import LikedPlayer from "../components/LikedPlayer"
 import Trailer from "../components/Trailer"
+
 const Home = () => {
   return (
-  <div>
-    <GameCarousel/>
-    <div className="flex gap-4 p-4">
-      <div className="flex flex-col w-3/4 gap-4">
-       <div className="w-full flex justify-center">
-        <Trailer/>
-       </div>
-        <div className="flex gap-4">
-          <div className="w-1/3">
-            <MvpCard/>
+    <div className="space-y-8">
+      <GameCarousel />
+      <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+        <div className="space-y-6">
+          <Trailer />
+          <div className="grid gap-6 lg:grid-cols-[1.1fr_1.9fr]">
+            <MvpCard />
+            <NewsCarousel />
           </div>
-          <div className="w-2/3">
-            <NewsCarousel/>
-          </div>
+          <News />
         </div>
-        <News/>
-      </div>
-      <div className="flex flex-col w-1/4 gap-2">
-        <MiniTeamRanking/>
-        <MiniPlayerRanking/>
-        <LikedPlayer/>
+        <div className="space-y-6">
+          <MiniTeamRanking />
+          <MiniPlayerRanking />
+          <LikedPlayer />
+        </div>
       </div>
     </div>
-  </div>
-)
+  )
 }
+
 export default Home

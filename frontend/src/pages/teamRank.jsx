@@ -1,6 +1,8 @@
 import { useTopTeam } from "../hooks/useTeam"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import {
   Select,
   SelectContent,
@@ -9,123 +11,181 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useState } from 'react'
+import { Trophy, TrendingUp } from "lucide-react"
+
+const SEASONS = ['2024-25', '2023-24', '2022-23', '2021-22']
+const STAT_TYPES = [
+  { value: 'pts', label: '得分' },
+  { value: 'oppPts', label: '失分' },
+  { value: 'reb', label: '篮板' },
+  { value: 'ast', label: '助攻' },
+  { value: 'offRating', label: '进攻效率' },
+  { value: 'defRating', label: '防守效率' },
+]
+
+const ConferenceTable = ({ teams, navigate }) => (
+  <Table className="text-xs sm:text-sm">
+    <TableHeader>
+      <TableRow>
+        <TableHead className="w-12">#</TableHead>
+        <TableHead>球队</TableHead>
+        <TableHead className="text-right">战绩</TableHead>
+        <TableHead className="text-right">胜率</TableHead>
+      </TableRow>
+    </TableHeader>
+    <TableBody>
+      {teams.map((item, index) => (
+        <TableRow
+          key={item.id}
+          className="cursor-pointer hover:bg-muted"
+          onClick={() => navigate(`/team/${item.team?.id || item.id}`)}
+        >
+          <TableCell className="font-medium">{index + 1}</TableCell>
+          <TableCell>
+            <div className="flex items-center gap-2">
+              <img
+                src={item.team?.logoUrl || item.logoUrl}
+                alt={item.team?.name || item.name}
+                className="w-8 h-8 object-contain"
+                loading="lazy"
+              />
+              <span className="font-medium">{item.team?.name || item.name}</span>
+            </div>
+          </TableCell>
+          <TableCell className="text-right">
+            {item.wins}-{item.losses}
+          </TableCell>
+          <TableCell className="text-right font-bold">
+            {(item.winRate * 100).toFixed(1)}%
+          </TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table>
+)
+
+const StatTable = ({ teams, statType, navigate }) => (
+  <Table className="text-xs sm:text-sm">
+    <TableHeader>
+      <TableRow>
+        <TableHead className="w-12">#</TableHead>
+        <TableHead>球队</TableHead>
+        <TableHead className="text-right">
+          {STAT_TYPES.find(s => s.value === statType)?.label}
+        </TableHead>
+      </TableRow>
+    </TableHeader>
+    <TableBody>
+      {teams.map((item, index) => (
+        <TableRow
+          key={item.id}
+          className="cursor-pointer hover:bg-muted"
+          onClick={() => navigate(`/team/${item.team?.id || item.id}`)}
+        >
+          <TableCell className="font-medium">{index + 1}</TableCell>
+          <TableCell>
+            <div className="flex items-center gap-2">
+              <img
+                src={item.team?.logoUrl || item.logoUrl}
+                alt={item.team?.name || item.name}
+                className="w-8 h-8 object-contain"
+                loading="lazy"
+              />
+              <span className="font-medium">{item.team?.name || item.name}</span>
+            </div>
+          </TableCell>
+          <TableCell className="text-right font-bold text-primary">
+            {item[statType]}
+          </TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table>
+)
+
 const TeamRank = () => {
   const navigate = useNavigate()
-  const [leftType, setLeftType] = useState('east')
-  const [rightType, setRightType] = useState('west')
-  const [leftSeason, setLeftSeason] = useState('2025-26')
-  const [rightSeason, setRightSeason] = useState('2025-26')
-  const [leftExpanded, setLeftExpanded] = useState(true)
-  const [rightExpanded, setRightExpanded] = useState(true)
-  const validtypes = ['east', 'west', 'pts', 'oppPts', 'offRating', 'defRating', 'reb', 'ast'];
-  const validSeasons = ['2021-22', '2022-23', '2023-24', '2024-25', '2025-26'];
-  const { data: { teams: leftTeams = [] } = {} } = useTopTeam(leftType, leftSeason)
-  const { data: { teams: rightTeams = [] } = {} } = useTopTeam(rightType, rightSeason)
-  const leftClass = leftExpanded ? 'flex-wrap justify-center w-1/2   rounded-3xl overflow-hidden shadow-xl mr-8' : 'hidden'
-  const rightClass = rightExpanded ? 'flex-wrap justify-center w-1/2   rounded-3xl overflow-hidden shadow-xl mr-8' : 'hidden'
+  const [season, setSeason] = useState('2024-25')
+  const [statType, setStatType] = useState('pts')
+
+  const { data: { teams: east = [] } = {} } = useTopTeam('east', season)
+  const { data: { teams: west = [] } = {} } = useTopTeam('west', season)
+  const { data: { teams: statTeams = [] } = {} } = useTopTeam(statType, season)
+
   return (
-    <div className="flex justify-center">
-      <div className="flex  justify-around w-4/5 my-10">
-        <Button onClick={() => setLeftExpanded(!leftExpanded)}>
-          {leftExpanded ? 'Fold' : 'Expand'}
-        </Button>
-        <div className={leftClass}>
-          <div className="flex">
-            <Select defaultValue={leftType} onValueChange={(value) => setLeftType(value)}>
-              <SelectTrigger className="w-[160px]">
+    <div className="space-y-6">
+      {/* 赛季选择器 */}
+      <Card className="border bg-white/85 shadow-sm">
+        <CardContent className="p-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">赛季:</span>
+            <Select value={season} onValueChange={setSeason}>
+              <SelectTrigger className="w-[120px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {validtypes.map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {type}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select defaultValue={leftSeason} onValueChange={(value) => setLeftSeason(value)}>
-              <SelectTrigger className="w-[160px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {validSeasons.map((season) => (
-                  <SelectItem key={season} value={season}>
-                    {season}
-                  </SelectItem>
+                {SEASONS.map((s) => (
+                  <SelectItem key={s} value={s}>{s}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
-          <div className="flex flex-col gap-y-5">
-            <div className=" flex items-center   font-bold text-sm mt-3 ">
-              <span className="w-1/2 ml-5 ">{`${leftType} Leaderboard`}</span>
-              {leftType === 'east' || leftType === 'west' ? <div className="flex">
-                <span>WIN-LOSS</span><span className="ml-5">WINRATE</span>
-              </div> : <span>DATA</span>}
-            </div>
-            {leftTeams.map((item, index) => (
-              <div className="flex items-center gap-4 cursor-pointer hover:bg-gray-100 p-1 rounded" key={item.id} onClick={() => navigate(`/team/${item.team ? item.team.id : item.id}`)}>
-                <div className="flex items-center gap-4 w-1/2">
-                  <p className="font-bold ml-2 ">{index + 1}</p>
-                  <img className="w-16 h-16" src={item.team ? item.team.logoUrl : item.logoUrl} alt={item.team ? item.team.name : item.name} />
-                  <p className="font-bold ">{item.team ? item.team.name : item.name}</p>
-                </div>
-                {leftType === 'east' || leftType === 'west' ? <div className="flex ml-5"><p>{`${item.wins}-${item.losses}`}</p><p className="ml-12"> {`${(item.winRate * 100).toFixed(1)}%`}</p></div> : <p>{item[leftType]}</p>}
-              </div>
-            ))}
-          </div>
-        </div>
-        <Button onClick={() => setRightExpanded(!rightExpanded)}>
-          {rightExpanded ? 'Fold' : 'Expand'}
-        </Button>
-        <div className={rightClass}>
-          <div className="flex">
-            <Select defaultValue={rightType} onValueChange={(value) => setRightType(value)}>
-              <SelectTrigger className="w-[160px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {validtypes.map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {type}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select defaultValue={rightSeason} onValueChange={(value) => setRightSeason(value)}>
-              <SelectTrigger className="w-[160px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {validSeasons.map((season) => (
-                  <SelectItem key={season} value={season}>
-                    {season}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex flex-col gap-y-5">
-            <div className=" flex items-center   font-bold text-sm mt-3 ">
-              <span className="w-1/2 ml-5 ">{`${rightType} Leaderboard`}</span>
-              {rightType === 'east' || rightType === 'west' ? <div className="flex">
-                <span>WIN-LOSS</span><span className="ml-5">WINRATE</span>
-              </div> : <span>DATA</span>}
-            </div>
-            {rightTeams.map((item, index) => (
-              <div className="flex items-center gap-4 cursor-pointer hover:bg-gray-100 p-1 rounded" key={item.id} onClick={() => navigate(`/team/${item.team ? item.team.id : item.id}`)}>
-                <div className="flex items-center gap-4 w-1/2">
-                  <p className="font-bold ml-2 ">{index + 1}</p>
-                  <img className="w-16 h-16" src={item.team ? item.team.logoUrl : item.logoUrl} alt={item.team ? item.team.name : item.name} />
-                  <p className="font-bold">{item.team ? item.team.name : item.name}</p>
-                </div>
-                {rightType === 'east' || rightType === 'west' ? <div className="flex ml-5"><p>{`${item.wins}-${item.losses}`}</p><p className="ml-12"> {`${(item.winRate * 100).toFixed(1)}%`}</p></div> : <p>{item[rightType]}</p>}
-              </div>
-            ))}
-          </div>
-        </div>
+        </CardContent>
+      </Card>
+
+      {/* 战绩排名 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card className="border bg-white/85 shadow-sm">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Trophy className="w-4 h-4" />
+              东部战绩
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ConferenceTable teams={east} navigate={navigate} />
+          </CardContent>
+        </Card>
+
+        <Card className="border bg-white/85 shadow-sm">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Trophy className="w-4 h-4" />
+              西部战绩
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ConferenceTable teams={west} navigate={navigate} />
+          </CardContent>
+        </Card>
       </div>
+
+      {/* 数据排名 */}
+      <Card className="border bg-white/85 shadow-sm">
+        <CardHeader className="pb-2">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-base flex items-center gap-2">
+              <TrendingUp className="w-4 h-4" />
+              数据排名
+            </CardTitle>
+            <Select value={statType} onValueChange={setStatType}>
+              <SelectTrigger className="w-[120px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {STAT_TYPES.map((s) => (
+                  <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <StatTable teams={statTeams} statType={statType} navigate={navigate} />
+        </CardContent>
+      </Card>
     </div>
   )
 }
+
 export default TeamRank

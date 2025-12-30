@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom"
+import { Card } from "@/components/ui/card"
 
 const PlayerCard = ({ player }) => {
   const navigate = useNavigate()
@@ -6,8 +7,8 @@ const PlayerCard = ({ player }) => {
   if (!player || !player.seasonStats?.length) return null
 
   return (
-    <div
-      className="relative h-[400px] w-[280px] overflow-hidden rounded-3xl bg-white shadow-xl cursor-pointer hover:shadow-2xl transition-shadow"
+    <Card
+      className="relative h-[320px] w-full overflow-hidden border bg-white/85 shadow-sm cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-lg"
       onClick={() => navigate(`/player/${player.id}`)}
     >
       <img src={player.headshotUrl} className="absolute inset-0 h-full w-full object-cover" alt={player.fullName} />
@@ -20,7 +21,7 @@ const PlayerCard = ({ player }) => {
           <span>{player.seasonStats[0].ast}助攻</span>
         </div>
       </div>
-    </div>
+    </Card>
   )
 }
 

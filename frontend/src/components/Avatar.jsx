@@ -15,16 +15,16 @@ const UserAvatar = () => {
           <AvatarFallback>{user.username.charAt(0).toUpperCase()}</AvatarFallback>
         </Avatar>
       </PopoverTrigger>
-      <PopoverContent className="w-32 ">
-        <div className="flex flex-col gap-4">
+      <PopoverContent className="w-40 p-2">
+        <div className="flex flex-col gap-1">
           <Link to="/profile">
-            <Button className="flex items-center justify-center gap-2 cursor-pointer w-full ">
-              Profile
+            <Button variant="ghost" className="flex w-full justify-start gap-2">
+              个人资料
             </Button>
           </Link>
           <Link to="/">
-            <Button onClick={signOut} className="flex items-center justify-center gap-2 cursor-pointer w-full ">
-              Sign Out
+            <Button variant="ghost" onClick={signOut} className="flex w-full justify-start gap-2 text-red-500 hover:text-red-600">
+              退出登录
             </Button>
           </Link>
         </div>

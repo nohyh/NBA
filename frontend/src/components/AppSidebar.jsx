@@ -1,12 +1,13 @@
 // components/app-sidebar.tsx
-import { Calendar, Home, Inbox, Search, Settings, Trophy ,BarChart3,User} from "lucide-react";
-import { Link } from "react-router-dom"
+import { Calendar, Home, Search, Trophy, BarChart3 } from "lucide-react";
+import { Link, useLocation } from "react-router-dom"
 
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -23,28 +24,31 @@ const items = [
 ]
 
 export function AppSidebar() {
+  const { pathname } = useLocation();
   return (
-    <Sidebar>
-      <SidebarContent>
-       <SidebarHeader>
-        <div className ="flex items-center gap-2">
-            <img 
-              src="/images/nba-logo.jpg" 
-              alt="NBA Logo" 
-              className="w-20 h-12" 
-            />
-            <span className="text-3xl font-bold">NBA</span>
-        </div>    
-       </SidebarHeader>   
-       <SidebarGroup>
+    <Sidebar variant="inset" className="border-r border-sidebar-border/60 bg-sidebar/70 backdrop-blur">
+      <SidebarContent className="gap-4">
+        <SidebarHeader className="px-4 pt-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white shadow-sm">
+              <img src="/images/nba-logo.jpg" alt="NBA" className="h-9 w-9 object-contain" />
+            </div>
+            <div className="flex flex-col leading-tight">
+              <span className="text-base font-semibold tracking-tight">NOHYH</span>
+              <span className="text-xs text-muted-foreground">Basketball Lab</span>
+            </div>
+          </div>
+        </SidebarHeader>
+        <SidebarGroup>
+          <SidebarGroupLabel>导航</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild className="py-7">
-                    <Link to={item.url} className="text-xl">
-                      <item.icon  className="!w-6 !h-6"/>
-                      <span>{item.title}</span>
+                  <SidebarMenuButton asChild isActive={pathname === item.url} className="h-11 gap-3 px-3 text-[15px]">
+                    <Link to={item.url}>
+                      <item.icon className="size-5" />
+                      <span className="font-medium">{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
