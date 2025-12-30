@@ -3,11 +3,17 @@ const prisma = require("../utils/prisma");
 const getGameByDate = async(req,res)=>{
     try{
         const {date} = req.query;
+        if (!date) {
+            return res.status(400).json({ message: "Missing date" });
+        }
+        // Treat the query date as local (Asia/Shanghai) and convert to UTC range.
+        const start = new Date(`${date}T00:00:00+08:00`);
+        const end = new Date(`${date}T23:59:59+08:00`);
         const games =await prisma.game.findMany({
             where:{
                  gameDate: {
-                 gte: new Date(`${date}T00:00:00`),
-                lt: new Date(`${date}T23:59:59`)
+                 gte: start,
+                 lte: end
              }
             },
             include:{
