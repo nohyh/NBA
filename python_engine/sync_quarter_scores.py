@@ -1,11 +1,11 @@
 """
 同步四节比分数据到 Game 表
-使用 BoxScoreSummaryV2 获取 line_score 数据
+使用 NBA Live API 获取比分数据
 """
 import sqlite3
 import os
 import time
-from nba_api.stats.endpoints import BoxScoreSummaryV2
+from nba_api.live.nba.endpoints import boxscore
 
 # 连接数据库
 db_path = os.path.join(os.path.dirname(__file__), '../backend/prisma/dev.db')
@@ -23,45 +23,31 @@ def get_games_without_quarter_scores():
         AND gameId LIKE '002%'
         AND homeQ1 IS NULL
         ORDER BY gameDate DESC
-        LIMIT 100
     """)
     return cursor.fetchall()
 
-def get_team_nba_id(team_id):
-    """获取球队的 nbaId"""
-    cursor.execute("SELECT nbaId FROM Team WHERE id = ?", (team_id,))
-    result = cursor.fetchone()
-    return result[0] if result else None
-
 def sync_quarter_scores(game_info):
-    """同步单场比赛的四节比分"""
+    """同步单场比赛的四节比分 - 使用 Live API"""
     db_id, game_id, home_team_id, away_team_id = game_info
     
     try:
-        box = BoxScoreSummaryV2(game_id=game_id)
-        line_score = box.line_score.get_data_frame()
+        box = boxscore.BoxScore(game_id=game_id)
+        game_data = box.game.get_dict()
         
-        if line_score.empty:
-            print(f"  ⚠️ 比赛 {game_id} 没有比分数据")
+        home_team = game_data.get('homeTeam', {})
+        away_team = game_data.get('awayTeam', {})
+        
+        # 获取四节比分
+        home_periods = home_team.get('periods', [])
+        away_periods = away_team.get('periods', [])
+        
+        if len(home_periods) < 4 or len(away_periods) < 4:
+            print(f"  ⚠️ 比赛 {game_id} 比分数据不完整")
             return False
         
-        home_nba_id = get_team_nba_id(home_team_id)
-        away_nba_id = get_team_nba_id(away_team_id)
-        
-        home_row = line_score[line_score['TEAM_ID'] == home_nba_id]
-        away_row = line_score[line_score['TEAM_ID'] == away_nba_id]
-        
-        if home_row.empty or away_row.empty:
-            print(f"  ⚠️ 比赛 {game_id} 找不到球队数据")
-            return False
-        
-        home_row = home_row.iloc[0]
-        away_row = away_row.iloc[0]
-        
-        # 提取四节比分
-        def safe_int(val):
+        def get_period_score(periods, idx):
             try:
-                return int(val) if val and val == val else None
+                return int(periods[idx].get('score', 0))
             except:
                 return None
         
@@ -71,14 +57,14 @@ def sync_quarter_scores(game_info):
                 awayQ1 = ?, awayQ2 = ?, awayQ3 = ?, awayQ4 = ?
             WHERE id = ?
         """, (
-            safe_int(home_row.get('PTS_QTR1')),
-            safe_int(home_row.get('PTS_QTR2')),
-            safe_int(home_row.get('PTS_QTR3')),
-            safe_int(home_row.get('PTS_QTR4')),
-            safe_int(away_row.get('PTS_QTR1')),
-            safe_int(away_row.get('PTS_QTR2')),
-            safe_int(away_row.get('PTS_QTR3')),
-            safe_int(away_row.get('PTS_QTR4')),
+            get_period_score(home_periods, 0),
+            get_period_score(home_periods, 1),
+            get_period_score(home_periods, 2),
+            get_period_score(home_periods, 3),
+            get_period_score(away_periods, 0),
+            get_period_score(away_periods, 1),
+            get_period_score(away_periods, 2),
+            get_period_score(away_periods, 3),
             db_id
         ))
         
@@ -97,16 +83,20 @@ def sync_all_quarter_scores():
         return
     
     synced = 0
+    failed = 0
     for i, game in enumerate(games):
         print(f"[{i+1}/{len(games)}] 同步比赛 {game[1]}...")
         if sync_quarter_scores(game):
             synced += 1
             print(f"  ✅ 成功")
+        else:
+            failed += 1
         conn.commit()
-        time.sleep(0.6)
+        time.sleep(0.3)
     
-    print(f"\n🎉 同步完成！成功同步 {synced}/{len(games)} 场比赛")
+    print(f"\n🎉 同步完成！成功 {synced}/{len(games)}，失败 {failed}")
 
 if __name__ == '__main__':
     sync_all_quarter_scores()
     conn.close()
+
