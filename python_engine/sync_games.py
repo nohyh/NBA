@@ -5,12 +5,49 @@
 import sqlite3
 import os
 import requests
-from datetime import datetime
+import re
+from datetime import datetime, timedelta
 
 # 连接数据库
 db_path = os.path.join(os.path.dirname(__file__), '../backend/prisma/dev.db')
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
+
+def parse_game_time_to_utc(base_date_str, game_time_str):
+    """
+    把美东时间的 gameTime 转成 UTC ISO 格式
+    base_date_str: "2025-12-30" (美东日期)
+    game_time_str: "8:00 pm ET" 或 "7:30 PM ET" 等
+    返回: "2025-12-31T01:00:00.000Z" (UTC 时间)
+    """
+    if not game_time_str or 'ET' not in game_time_str.upper():
+        # 如果没有时间或格式不对，默认美东晚 7 点 (常见开赛时间)
+        game_time_str = "7:00 pm ET"
+    
+    # 解析时间字符串，如 "8:00 pm ET"
+    match = re.match(r'(\d{1,2}):(\d{2})\s*(am|pm)', game_time_str, re.IGNORECASE)
+    if not match:
+        # 默认晚 7 点
+        hour, minute = 19, 0
+    else:
+        hour = int(match.group(1))
+        minute = int(match.group(2))
+        am_pm = match.group(3).lower()
+        
+        if am_pm == 'pm' and hour != 12:
+            hour += 12
+        elif am_pm == 'am' and hour == 12:
+            hour = 0
+    
+    # 构建美东本地时间
+    et_datetime = datetime.strptime(f"{base_date_str} {hour:02d}:{minute:02d}:00", "%Y-%m-%d %H:%M:%S")
+    
+    # 美东时间转 UTC (简化处理：冬令时 +5 小时，夏令时 +4 小时)
+    # NBA 常规赛主要在冬令时期间，使用 +5 小时
+    utc_datetime = et_datetime + timedelta(hours=5)
+    
+    return utc_datetime.strftime('%Y-%m-%dT%H:%M:%S.000Z')
+
 
 print(f"已连接到数据库: {db_path}")
 
@@ -55,12 +92,13 @@ def sync_all_games():
     for game_date in schedule['gameDates']:
         date_str = game_date['gameDate']  # 格式: "12/18/2025 00:00:00"
         
-        # 转换日期格式为 YYYY-MM-DD
+        # 解析美东日期
         try:
             dt = datetime.strptime(date_str, '%m/%d/%Y %H:%M:%S')
-            db_date = dt.strftime('%Y-%m-%d')
+            base_date = dt.strftime('%Y-%m-%d')
         except:
             continue
+
         
         games = game_date['games']
         total_games += len(games)
@@ -94,6 +132,9 @@ def sync_all_games():
                 status = 'Scheduled'
                 game_time = game_status_text
             
+            # 把美东时间转成 UTC 时间存入 gameDate
+            db_date = parse_game_time_to_utc(base_date, game_status_text)
+            
             # 获取比分
             home_score = game['homeTeam'].get('score', 0) or None
             away_score = game['awayTeam'].get('score', 0) or None
@@ -121,6 +162,7 @@ def sync_all_games():
             except Exception as e:
                 print(f"  ⚠️ 同步比赛 {game_id} 失败: {e}")
                 skipped_games += 1
+
     
     conn.commit()
     

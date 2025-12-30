@@ -1,9 +1,9 @@
 import { Carousel, CarouselContent, CarouselItem ,CarouselNext,CarouselPrevious} from "@/components/ui/carousel"
 import {GameCard} from "./GameCard"
 import { useGameByDate } from "../hooks/useGame"
-import { getETDate } from "../utils/date"
+import { getLocalDateString } from "../utils/date"
 const GameCarousel = () => {
-  const {data} = useGameByDate(getETDate())
+  const {data} = useGameByDate(getLocalDateString())
   const TodaysGame = data?.games||[]
     if(TodaysGame.length<=4){
         return(

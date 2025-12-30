@@ -5,6 +5,7 @@ import { useState, useEffect } from "react"
 import { useAuth } from "../context/AuthContext"
 import { ToCm, ToKg } from "../utils/transform"
 import { useNavigate } from "react-router-dom"
+import { formatLocalDateYmd } from "../utils/date"
 const Player = () => {
     const navigate = useNavigate();
     const { playerId } = useParams()
@@ -93,7 +94,7 @@ const Player = () => {
                     </div>
                     {player.gameLogs.map((game) => (
                         <div key={game.id} className="flex gap-3 divide-y divide-gray-200">
-                            <span className="w-25">{(game.gameDate).slice(0, 10)}</span>
+                            <span className="w-25">{formatLocalDateYmd(game.gameDate)}</span>
                             <span className=" flex w-25">{game.matchup}</span>
                             <span className="w-25">{game.wl}</span>
                             <span className="w-25">{game.min}</span>

@@ -1,16 +1,52 @@
 const prisma = require("../utils/prisma");
 
+const buildLocalDayRange = (dateStr) => {
+    const base = dateStr ? new Date(`${dateStr}T00:00:00`) : new Date();
+    if (Number.isNaN(base.getTime())) {
+        return null;
+    }
+    const startDate = new Date(base.getFullYear(), base.getMonth(), base.getDate(), 0, 0, 0, 0);
+    const endDate = new Date(base.getFullYear(), base.getMonth(), base.getDate() + 1, 0, 0, 0, 0);
+    return { startDate, endDate };
+};
+
+const parseUtcRange = (start, end) => {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+        return null;
+    }
+    if (startDate >= endDate) {
+        return null;
+    }
+    return { startDate, endDate };
+};
+
 const getGameByDate = async(req,res)=>{
     try{
-        const {date} = req.query;
-        if(!date){
-            return res.status(400).json({message:"Missing date"})
+        const { date, start, end } = req.query;
+        let range = null;
+        if (start || end) {
+            if (!start || !end) {
+                return res.status(400).json({ message: "Missing start or end" });
+            }
+            range = parseUtcRange(start, end);
+            if (!range) {
+                return res.status(400).json({ message: "Invalid start or end" });
+            }
+        } else if (date) {
+            range = buildLocalDayRange(date);
+            if (!range) {
+                return res.status(400).json({ message: "Invalid date" });
+            }
+        } else {
+            return res.status(400).json({ message: "Missing date or range" });
         }
         const games =await prisma.game.findMany({
             where:{
                  gameDate: {
-                 gte: new Date(`${date}T00:00:00`),
-                lt: new Date(`${date}T23:59:59`)
+                 gte: range.startDate,
+                lt: range.endDate
              }
             },
             include:{

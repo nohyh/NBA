@@ -1,11 +1,14 @@
 import apiClient from "../api/apiClient";
+import { getLocalDateRange } from "../utils/date";
 const getGameByDate = (date) => {
-    const dateStr = date instanceof Date 
-        ? date.toISOString().split('T')[0] 
-        : date;
-    return apiClient.get(`/games?date=${dateStr}`);
+    const { startUtc, endUtc } = getLocalDateRange(date);
+    const params = new URLSearchParams({
+        start: startUtc,
+        end: endUtc,
+    });
+    return apiClient.get(`/games?${params.toString()}`);
 }
-const getGameByTeam= (teamId) => {
+const getGameByTeam = (teamId) => {
     return apiClient.get(`/game/${teamId}`);
 }
 const getGameDetail = (gameId) => {

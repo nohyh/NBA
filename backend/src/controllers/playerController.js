@@ -6,6 +6,28 @@ const ALL_TYPES = [
     'oreb', 'dreb', 'eff', 'astTov', 'stlTov'
 ]
 
+const buildLocalDayRange = (dateStr) => {
+    const base = dateStr ? new Date(`${dateStr}T00:00:00`) : new Date();
+    if (Number.isNaN(base.getTime())) {
+        return null;
+    }
+    const startDate = new Date(base.getFullYear(), base.getMonth(), base.getDate(), 0, 0, 0, 0);
+    const endDate = new Date(base.getFullYear(), base.getMonth(), base.getDate() + 1, 0, 0, 0, 0);
+    return { startDate, endDate };
+};
+
+const parseUtcRange = (start, end) => {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+        return null;
+    }
+    if (startDate >= endDate) {
+        return null;
+    }
+    return { startDate, endDate };
+};
+
 const getPlayerById = async (req, res) => {
 
     try {
@@ -75,14 +97,30 @@ const getLeaders = async (req, res) => {
     }
 }
 const mvpOfToday = async (req, res) => {
-    const etDate = getETDate();
-    const dateStr = etDate.toISOString().split('T')[0];
     try {
+        const { start, end } = req.query;
+        let range = null;
+        if (start || end) {
+            if (!start || !end) {
+                return res.status(400).json({ message: "Missing start or end" });
+            }
+            range = parseUtcRange(start, end);
+            if (!range) {
+                return res.status(400).json({ message: "Invalid start or end" });
+            }
+        }
+        if (!range) {
+            const dateStr = getETDate();
+            range = buildLocalDayRange(dateStr);
+            if (!range) {
+                return res.status(400).json({ message: "Invalid date" });
+            }
+        }
         const playerOfToday = await prisma.playerGameLog.findMany({
             where: {
                 gameDate: {
-                    gte: new Date(dateStr + 'T00:00:00'),
-                    lt: new Date(dateStr + 'T23:59:59')
+                    gte: range.startDate,
+                    lt: range.endDate
                 }
             },
             include: {
