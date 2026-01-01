@@ -4,6 +4,7 @@
 用于今日最佳球员(MVP)计算
 """
 import sqlite3
+import os
 from datetime import datetime
 from nba_api.live.nba.endpoints import scoreboard, boxscore
 from db_utils import get_db_path
