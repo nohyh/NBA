@@ -94,32 +94,56 @@ const getLeaders = async (req, res) => {
 }
 const mvpOfToday = async (req, res) => {
     // Use same logic as games API: Beijing today = ET yesterday's games
-    // Get Beijing time noon, then subtract a day to get ET game date
+    // Get current date in Beijing timezone, then use previous day for ET games
     const now = new Date();
-    const beijingNoon = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Shanghai' }));
-    beijingNoon.setHours(12, 0, 0, 0);
-    const etDate = new Date(beijingNoon);
-    etDate.setDate(etDate.getDate() - 1);
-    const dateStr = etDate.toISOString().split('T')[0];
+    // Create a date for "today" in Beijing time
+    const beijingDate = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Shanghai' }));
+    // Subtract 1 day to get corresponding ET game date
+    beijingDate.setDate(beijingDate.getDate() - 1);
+    const year = beijingDate.getFullYear();
+    const month = String(beijingDate.getMonth() + 1).padStart(2, '0');
+    const day = String(beijingDate.getDate()).padStart(2, '0');
+    const dateStr = `${year}-${month}-${day}`;
+
+    console.log('MVP query date:', dateStr); // Debug log
+
     try {
-        const playerOfToday = await prisma.playerGameLog.findMany({
-            where: {
-                gameDate: {
-                    gte: new Date(dateStr + 'T00:00:00'),
-                    lt: new Date(dateStr + 'T23:59:59')
-                }
-            },
-            include: {
-                player: true
-            }
-        })
+        // Use raw query to match date string format in SQLite
+        const playerOfToday = await prisma.$queryRaw`
+            SELECT pgl.*, p.id as player_id, p.firstName, p.lastName, p.fullName, p.headshotUrl, p.position, p.jersey
+            FROM PlayerGameLog pgl
+            JOIN Player p ON pgl.playerId = p.id
+            WHERE pgl.gameDate LIKE ${dateStr + '%'}
+        `;
         if (playerOfToday.length === 0) {
             return res.status(404).json({ message: "No player found" });
         }
-        const mvp = playerOfToday.reduce((prev, curr) => {
+        const mvpRaw = playerOfToday.reduce((prev, curr) => {
             const getScore = (p) => (p.pts || 0) + (p.ast || 0) * 1.2 + (p.reb || 0) + ((p.stl || 0) + (p.blk || 0)) * 2 - (p.tov || 0) * 1.5;
             return getScore(curr) > getScore(prev) ? curr : prev;
         }, playerOfToday[0]);
+
+        // Format to match expected structure
+        const mvp = {
+            id: mvpRaw.id,
+            gameId: mvpRaw.gameId,
+            gameDate: mvpRaw.gameDate,
+            matchup: mvpRaw.matchup,
+            pts: mvpRaw.pts,
+            reb: mvpRaw.reb,
+            ast: mvpRaw.ast,
+            stl: mvpRaw.stl,
+            blk: mvpRaw.blk,
+            player: {
+                id: mvpRaw.player_id,
+                firstName: mvpRaw.firstName,
+                lastName: mvpRaw.lastName,
+                fullName: mvpRaw.fullName,
+                headshotUrl: mvpRaw.headshotUrl,
+                position: mvpRaw.position,
+                jersey: mvpRaw.jersey
+            }
+        };
         return res.status(200).json({ mvp });
     }
     catch (error) {
