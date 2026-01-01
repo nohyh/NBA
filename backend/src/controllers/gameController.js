@@ -40,7 +40,7 @@ const getGameByDate = async (req, res) => {
         const formattedGames = games.map(g => ({
             id: g.id,
             gameId: g.gameId,
-            gameDate: g.gameDate,
+            gameDate: date,  // Use the user's query date (Beijing time) instead of ET date from DB
             gameTime: g.gameTime,
             status: g.status,
             homeTeamId: g.homeTeamId,
