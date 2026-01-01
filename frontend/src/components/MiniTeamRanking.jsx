@@ -17,7 +17,7 @@ const TeamItem = ({ team, onClick }) => (
         />
         <span className="flex-1 font-medium text-sm truncate">{team.team.name}</span>
         <span className="text-sm text-muted-foreground">
-            {team.team.wins}-{team.team.losses}
+            {team.wins}-{team.losses}
         </span>
     </div>
 )
