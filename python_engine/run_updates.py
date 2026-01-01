@@ -11,12 +11,12 @@ BASE_DIR = Path(__file__).resolve().parent
 
 TASKS = {
     "live": [
-        ("update_scores.py", []),
+        ("sync_games.py", []),  # Use CDN API (more reliable) to update game status/scores
+        ("update_scores.py", []),  # Fallback to stats API for live scores
         ("sync_game_logs.py", []),
         ("sync_quarter_scores.py", []),
     ],
     "daily": [
-        ("sync_games.py", []),
         ("sync_team_stats.py", []),
         ("sync_player_stats.py", []),
         ("sync_news.py", []),
