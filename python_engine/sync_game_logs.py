@@ -66,6 +66,34 @@ def sync_game_box_score(game_info, game_date, player_map):
         
         synced = 0
         
+        # 同步四节比分 (使用 Live API 的 periods 数据)
+        try:
+            home_team = game_data.get('homeTeam', {})
+            away_team = game_data.get('awayTeam', {})
+            home_periods = home_team.get('periods', [])
+            away_periods = away_team.get('periods', [])
+            
+            if len(home_periods) >= 4 and len(away_periods) >= 4:
+                cursor.execute('''
+                    UPDATE Game SET
+                        homeQ1 = ?, homeQ2 = ?, homeQ3 = ?, homeQ4 = ?,
+                        awayQ1 = ?, awayQ2 = ?, awayQ3 = ?, awayQ4 = ?
+                    WHERE gameId = ?
+                ''', (
+                    home_periods[0].get('score', 0),
+                    home_periods[1].get('score', 0),
+                    home_periods[2].get('score', 0),
+                    home_periods[3].get('score', 0),
+                    away_periods[0].get('score', 0),
+                    away_periods[1].get('score', 0),
+                    away_periods[2].get('score', 0),
+                    away_periods[3].get('score', 0),
+                    game_id
+                ))
+                print(f"  📊 已更新四节比分")
+        except Exception as qe:
+            print(f"  ⚠️ 四节比分更新失败: {qe}")
+        
         # 处理主队和客队球员
         for team_key in ['homeTeam', 'awayTeam']:
             team_data = game_data[team_key]
