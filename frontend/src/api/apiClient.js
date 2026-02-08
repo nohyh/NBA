@@ -3,7 +3,7 @@ const BASE_URL = import.meta.env.VITE_API_BASE || "/api";
 
 const apiClient =axios.create({
     baseURL:BASE_URL,
-});
+});//发送请求时不用加前缀
 
 apiClient.interceptors.request.use(
     (config) =>{
@@ -16,5 +16,5 @@ apiClient.interceptors.request.use(
     (error) =>{
         return Promise.reject(error);
     }
-)
+)//发送请求时自动携带token
 export default apiClient;

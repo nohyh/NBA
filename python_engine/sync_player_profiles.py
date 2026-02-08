@@ -6,16 +6,15 @@
   python sync_player_profiles.py           # 同步所有球员
   python sync_player_profiles.py --test 5  # 只测试前 5 个
 """
-import sqlite3
 import sys
 import time
 from nba_api.stats.endpoints import commonplayerinfo
 from nba_api.stats.static import players
-from db_utils import get_db_path
+from db_utils import get_db_path, connect_db
 
 # 连接数据库
 db_path = get_db_path()
-conn = sqlite3.connect(db_path)
+conn = connect_db()
 cursor = conn.cursor()
 
 print(f"已连接到数据库: {db_path}")

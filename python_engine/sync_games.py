@@ -2,14 +2,13 @@
 同步 NBA 比赛数据到本地数据库
 使用 NBA 官方 CDN 赛程 API 获取完整赛季数据
 """
-import sqlite3
 import requests
 from datetime import datetime
-from db_utils import get_db_path
+from db_utils import get_db_path, connect_db
 
 # 连接数据库
 db_path = get_db_path()
-conn = sqlite3.connect(db_path)
+conn = connect_db()
 cursor = conn.cursor()
 
 print(f"已连接到数据库: {db_path}")

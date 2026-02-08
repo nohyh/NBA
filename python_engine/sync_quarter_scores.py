@@ -2,14 +2,13 @@
 同步四节比分数据到 Game 表
 使用 BoxScoreSummaryV2 获取 line_score 数据
 """
-import sqlite3
 import time
 from nba_api.stats.endpoints import BoxScoreSummaryV2
-from db_utils import get_db_path
+from db_utils import get_db_path, connect_db
 
 # 连接数据库
 db_path = get_db_path()
-conn = sqlite3.connect(db_path)
+conn = connect_db()
 cursor = conn.cursor()
 
 print(f"已连接到数据库: {db_path}")

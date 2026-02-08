@@ -8,15 +8,14 @@
   python sync_player_stats.py 2023-24      # 同步指定赛季常规赛
   python sync_player_stats.py 2023-24 Playoffs  # 同步指定赛季季后赛
 """
-import sqlite3
 import sys
 import time
 from nba_api.stats.endpoints import leagueleaders
-from db_utils import get_db_path
+from db_utils import get_db_path, connect_db
 
 # 连接数据库
 db_path = get_db_path()
-conn = sqlite3.connect(db_path)
+conn = connect_db()
 cursor = conn.cursor()
 
 print(f"已连接到数据库: {db_path}")
@@ -137,6 +136,8 @@ def sync_player_stats(season=CURRENT_SEASON, season_type="Regular Season"):
                     oreb, dreb, eff, ast_tov, stl_tov
                 ))
                 synced += 1
+                if synced % 200 == 0:
+                    conn.commit()
             except Exception as e:
                 print(f"  ⚠️ 同步球员 {nba_id} 失败: {e}")
                 skipped += 1

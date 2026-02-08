@@ -2,14 +2,13 @@
 同步 NBA 新闻到本地数据库
 使用 ESPN 免费公开 API
 """
-import sqlite3
 import requests
 from datetime import datetime
-from db_utils import get_db_path
+from db_utils import get_db_path, connect_db
 
 # 连接数据库
 db_path = get_db_path()
-conn = sqlite3.connect(db_path)
+conn = connect_db()
 cursor = conn.cursor()
 
 print(f"已连接到数据库: {db_path}")

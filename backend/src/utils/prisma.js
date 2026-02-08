@@ -4,7 +4,7 @@ const path = require("path");
 
 // 使用绝对路径确保正确定位数据库
 const dbPath = path.resolve(__dirname, "../../prisma/dev.db");
-const adapter = new PrismaBetterSqlite3({ url: `file:${dbPath}` });
+const adapter = new PrismaBetterSqlite3({ url: `file:${dbPath}`, timeout: 10000 });
 const prisma = new PrismaClient({ adapter });
 
 module.exports = prisma;

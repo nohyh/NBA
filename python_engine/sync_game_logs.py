@@ -3,15 +3,14 @@
 使用 NBA Live API 获取今日比赛的球员数据
 用于今日最佳球员(MVP)计算
 """
-import sqlite3
 import os
 from datetime import datetime
 from nba_api.live.nba.endpoints import scoreboard, boxscore
-from db_utils import get_db_path
+from db_utils import get_db_path, connect_db
 
 # 连接数据库
 db_path = get_db_path()
-conn = sqlite3.connect(db_path)
+conn = connect_db()
 cursor = conn.cursor()
 
 print(f"已连接到数据库: {db_path}")
@@ -173,6 +172,7 @@ def sync_today_game_logs():
     for game in games:
         print(f"\n正在同步: {game['matchup']}...")
         synced = sync_game_box_score(game, game_date, player_map)
+        conn.commit()
         total_synced += synced
         print(f"  同步了 {synced} 名球员")
     
