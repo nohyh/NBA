@@ -29,8 +29,3 @@ export const formatLocalDateMd = (value) => {
   return `${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
 }
 
-export const getETDate = () => {
-  const now = new Date()
-  now.setHours(now.getHours() - 15)
-  return now.toISOString().split("T")[0]
-}

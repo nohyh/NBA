@@ -1,5 +1,5 @@
-const getETDate = require("../utils/getETDate");
 const prisma = require("../utils/prisma");
+const { cnDateToEtGameDate, etGameDateToCnDate, getChinaTodayYmd } = require("../utils/dateCn");
 const ALL_TYPES = [
     'pts', 'reb', 'ast', 'stl', 'blk', 'tov', 'min',
     'fgPct', 'tppPct', 'ftPct', 'fgm', 'fga', 'fg3m', 'fg3a', 'ftm', 'fta',
@@ -50,6 +50,16 @@ const getPlayerById = async (req, res) => {
         if (!player) {
             return res.status(404).json({ message: "No player found" });
         }
+
+        // Normalize recent game logs date for China UI.
+        // gameDate is now a plain YYYY-MM-DD string (ET date).
+        if (player.gameLogs?.length) {
+            player.gameLogs = player.gameLogs.map((log) => ({
+                ...log,
+                gameDate: etGameDateToCnDate(log.gameDate) || log.gameDate,
+                gameDateEt: log.gameDate,
+            }));
+        }
         return res.status(200).json({ player });
     }
     catch (error) {
@@ -93,27 +103,22 @@ const getLeaders = async (req, res) => {
     }
 }
 const mvpOfToday = async (req, res) => {
-    // Use same logic as games API: Beijing today = ET yesterday's games
-    // Get current date in Beijing timezone, then use previous day for ET games
-    const now = new Date();
-    // Create a date for "today" in Beijing time
-    const beijingDate = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Shanghai' }));
-    // Subtract 1 day to get corresponding ET game date
-    beijingDate.setDate(beijingDate.getDate() - 1);
-    const year = beijingDate.getFullYear();
-    const month = String(beijingDate.getMonth() + 1).padStart(2, '0');
-    const day = String(beijingDate.getDate()).padStart(2, '0');
-    const dateStr = `${year}-${month}-${day}`;
-
-    console.log('MVP query date:', dateStr); // Debug log
+    // China-only contract:
+    // - "Today" is Asia/Shanghai calendar date.
+    // - MVP is computed from the ET game date that maps to China "today".
+    const cnToday = getChinaTodayYmd();
+    const etDateStr = cnDateToEtGameDate(cnToday);
+    if (!etDateStr) {
+        return res.status(500).json({ message: "Failed to compute ET date" });
+    }
 
     try {
-        // Use raw query to match date string format in SQLite
+        // gameDate is now a plain YYYY-MM-DD string, so direct match works.
         const playerOfToday = await prisma.$queryRaw`
             SELECT pgl.*, p.id as player_id, p.firstName, p.lastName, p.fullName, p.headshotUrl, p.position, p.jersey
             FROM PlayerGameLog pgl
             JOIN Player p ON pgl.playerId = p.id
-            WHERE pgl.gameDate LIKE ${dateStr + '%'}
+            WHERE pgl.gameDate = ${etDateStr}
         `;
         if (playerOfToday.length === 0) {
             return res.status(404).json({ message: "No player found" });
@@ -127,7 +132,9 @@ const mvpOfToday = async (req, res) => {
         const mvp = {
             id: mvpRaw.id,
             gameId: mvpRaw.gameId,
-            gameDate: mvpRaw.gameDate,
+            // Return China date for UI while keeping ET date for debugging.
+            gameDate: cnToday,
+            gameDateEt: etDateStr,
             matchup: mvpRaw.matchup,
             pts: mvpRaw.pts,
             reb: mvpRaw.reb,

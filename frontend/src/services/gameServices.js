@@ -1,13 +1,9 @@
 import apiClient from "../api/apiClient";
-import { getLocalDateString } from "../utils/date";
 
-const getGameByDate = (date) => {
-    const dateStr = date instanceof Date
-        ? getLocalDateString(date)
-        : date;
+const getGameByDate = (dateStr) => {
     return apiClient.get(`/games?date=${dateStr}`);
 }
-const getGameByTeam= (teamId) => {
+const getGameByTeam = (teamId) => {
     return apiClient.get(`/game/${teamId}`);
 }
 const getGameDetail = (gameId) => {

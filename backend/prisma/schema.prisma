@@ -157,7 +157,7 @@ model PlayerGameLog {
   playerId Int
   player   Player   @relation(fields: [playerId], references: [id])
   gameId   String   // 比赛ID
-  gameDate DateTime
+  gameDate String
   matchup  String   // 例如: "LAL vs GSW"
   wl       String   // W or L
 
@@ -176,7 +176,7 @@ model PlayerGameLog {
 model Game {
   id         Int      @id @default(autoincrement())
   gameId     String   @unique // NBA官方的比赛ID
-  gameDate   DateTime // 比赛日期 (只存日期部分)
+  gameDate   String   // ET game date, YYYY-MM-DD
   gameTime   String?  // 比赛开始时间 (如 "7:30 PM ET")
   status     String   // "Scheduled" | "In Progress" | "Final"
   

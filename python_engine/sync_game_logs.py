@@ -4,7 +4,7 @@
 用于今日最佳球员(MVP)计算
 """
 import os
-from datetime import datetime
+
 from nba_api.live.nba.endpoints import scoreboard, boxscore
 from db_utils import get_db_path, connect_db
 
@@ -127,15 +127,12 @@ def sync_game_box_score(game_info, game_date, player_map):
                 # 判断胜负
                 wl = 'W' if (is_home and home_win) or (not is_home and not home_win) else 'L'
                 
-                # 解析日期
-                dt = datetime.strptime(game_date, '%Y-%m-%d')
-                
-                # 插入记录
+                # 插入记录 (gameDate 直接存 YYYY-MM-DD 字符串)
                 cursor.execute('DELETE FROM PlayerGameLog WHERE playerId = ? AND gameId = ?', (player_id, game_id))
                 cursor.execute('''
                     INSERT INTO PlayerGameLog (playerId, gameId, gameDate, matchup, wl, min, pts, reb, ast, stl, blk, tov)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ''', (player_id, game_id, dt.isoformat(), matchup, wl, minutes, pts, reb, ast, stl, blk, tov))
+                ''', (player_id, game_id, game_date, matchup, wl, minutes, pts, reb, ast, stl, blk, tov))
                 synced += 1
         
         return synced
