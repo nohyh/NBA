@@ -1,13 +1,3 @@
-// Utilities for a China-only (Asia/Shanghai) product.
-//
-// Source-of-truth:
-// - DB "gameDate" and Live API "gameDate" are treated as ET calendar dates (YYYY-MM-DD).
-// - UI uses China calendar dates (YYYY-MM-DD).
-//
-// For NBA games, ET game day maps to the next calendar day in China (ET + 1 day).
-// So:
-// - cnDate -> etGameDate: cnDate - 1 day
-// - etGameDate -> cnDate: etGameDate + 1 day
 
 const YMD_RE = /^(\d{4})-(\d{2})-(\d{2})/;
 
