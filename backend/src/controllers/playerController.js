@@ -128,22 +128,22 @@ const mvpOfToday = async (req, res) => {
     }
 
     try {
-        // Match by calendar date to support both YYYY-MM-DD and DateTime storage.
+        // Match by calendar date to support both YYYY-MM-DD and DateTime-like storage.
         let queryEtDate = etDateStr;
         let playerOfToday = await prisma.$queryRaw`
             SELECT pgl.*, p.id as player_id, p.firstName, p.lastName, p.fullName, p.headshotUrl, p.position, p.jersey
             FROM PlayerGameLog pgl
             JOIN Player p ON pgl.playerId = p.id
-            WHERE date(pgl.gameDate) = ${queryEtDate}
+            WHERE substr(pgl.gameDate, 1, 10) = ${queryEtDate}
         `;
 
         // Fallback to latest available game date if today's ET date has no logs yet.
         if (playerOfToday.length === 0) {
             const latestDateRows = await prisma.$queryRaw`
-                SELECT date(gameDate) as latestDate
+                SELECT substr(gameDate, 1, 10) as latestDate
                 FROM PlayerGameLog
-                WHERE date(gameDate) <= ${etDateStr}
-                ORDER BY date(gameDate) DESC
+                WHERE substr(gameDate, 1, 10) <= ${etDateStr}
+                ORDER BY substr(gameDate, 1, 10) DESC
                 LIMIT 1
             `;
             const latestDate = latestDateRows?.[0]?.latestDate;
@@ -153,7 +153,7 @@ const mvpOfToday = async (req, res) => {
                     SELECT pgl.*, p.id as player_id, p.firstName, p.lastName, p.fullName, p.headshotUrl, p.position, p.jersey
                     FROM PlayerGameLog pgl
                     JOIN Player p ON pgl.playerId = p.id
-                    WHERE date(pgl.gameDate) = ${queryEtDate}
+                    WHERE substr(pgl.gameDate, 1, 10) = ${queryEtDate}
                 `;
             }
         }

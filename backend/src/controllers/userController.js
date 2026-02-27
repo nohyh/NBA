@@ -2,6 +2,9 @@ const prisma = require("../utils/prisma");
 const bcrypt = require("bcryptjs");
 const { signToken } = require("../utils/jwt");
 
+const CURRENT_SEASON = process.env.CURRENT_SEASON || "2025-26";
+const CURRENT_SEASON_TYPE = process.env.CURRENT_SEASON_TYPE || "Regular Season";
+
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const withWriteRetry = async (fn, retries = 2) => {
@@ -80,7 +83,16 @@ const getUser = async (req, res) => {
       include: {
         favoritePlayers: {
           include: {
-            seasonStats: true,
+            seasonStats: {
+              where: {
+                season: CURRENT_SEASON,
+                seasonType: CURRENT_SEASON_TYPE,
+              },
+              orderBy: {
+                updatedAt: "desc",
+              },
+              take: 1,
+            },
             team: true,
           },
         },
@@ -138,7 +150,19 @@ const favoritePlayer = async (req, res) => {
 
     const player = await prisma.player.findUnique({
       where: { id: playerId },
-      include: { seasonStats: true, team: true },
+      include: {
+        seasonStats: {
+          where: {
+            season: CURRENT_SEASON,
+            seasonType: CURRENT_SEASON_TYPE,
+          },
+          orderBy: {
+            updatedAt: "desc",
+          },
+          take: 1,
+        },
+        team: true,
+      },
     });
 
     return res.status(200).json({ player });
