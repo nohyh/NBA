@@ -1,5 +1,7 @@
 const prisma = require("../utils/prisma");
 const { cnDateToEtGameDate, etGameDateToCnDate, getChinaTodayYmd } = require("../utils/dateCn");
+const CURRENT_SEASON = process.env.CURRENT_SEASON || "2025-26";
+const CURRENT_SEASON_TYPE = process.env.CURRENT_SEASON_TYPE || "Regular Season";
 const ALL_TYPES = [
     'pts', 'reb', 'ast', 'stl', 'blk', 'tov', 'min',
     'fgPct', 'tppPct', 'ftPct', 'fgm', 'fga', 'fg3m', 'fg3a', 'ftm', 'fta',
@@ -37,7 +39,16 @@ const getPlayerById = async (req, res) => {
         const player = await prisma.player.findUnique({
             where: { id: parseInt(req.params.id) },
             include: {
-                seasonStats: true,
+                seasonStats: {
+                    where: {
+                        season: CURRENT_SEASON,
+                        seasonType: CURRENT_SEASON_TYPE,
+                    },
+                    orderBy: {
+                        updatedAt: "desc",
+                    },
+                    take: 1,
+                },
                 team: true,
                 gameLogs: {
                     orderBy: {
@@ -70,7 +81,7 @@ const getPlayerById = async (req, res) => {
 
 const getLeaders = async (req, res) => {
     try {
-        const { type, limit } = req.query;
+        const { type, limit, season = CURRENT_SEASON, seasonType = CURRENT_SEASON_TYPE } = req.query;
         if (!type || !limit) {
             return res.status(400).json({ message: "Missing type or limit" });
         }
@@ -84,6 +95,10 @@ const getLeaders = async (req, res) => {
         const leaders = await Promise.all(
             types.map(async (type) => {
                 const leader = await prisma.playerSeasonStat.findMany({
+                    where: {
+                        season,
+                        seasonType,
+                    },
                     orderBy: {
                         [type]: "desc"
                     },
