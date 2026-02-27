@@ -128,15 +128,38 @@ const mvpOfToday = async (req, res) => {
     }
 
     try {
-        // gameDate is now a plain YYYY-MM-DD string, so direct match works.
-        const playerOfToday = await prisma.$queryRaw`
+        // Match by calendar date to support both YYYY-MM-DD and DateTime storage.
+        let queryEtDate = etDateStr;
+        let playerOfToday = await prisma.$queryRaw`
             SELECT pgl.*, p.id as player_id, p.firstName, p.lastName, p.fullName, p.headshotUrl, p.position, p.jersey
             FROM PlayerGameLog pgl
             JOIN Player p ON pgl.playerId = p.id
-            WHERE pgl.gameDate = ${etDateStr}
+            WHERE date(pgl.gameDate) = ${queryEtDate}
         `;
+
+        // Fallback to latest available game date if today's ET date has no logs yet.
         if (playerOfToday.length === 0) {
-            return res.status(404).json({ message: "No player found" });
+            const latestDateRows = await prisma.$queryRaw`
+                SELECT date(gameDate) as latestDate
+                FROM PlayerGameLog
+                WHERE date(gameDate) <= ${etDateStr}
+                ORDER BY date(gameDate) DESC
+                LIMIT 1
+            `;
+            const latestDate = latestDateRows?.[0]?.latestDate;
+            if (latestDate) {
+                queryEtDate = latestDate;
+                playerOfToday = await prisma.$queryRaw`
+                    SELECT pgl.*, p.id as player_id, p.firstName, p.lastName, p.fullName, p.headshotUrl, p.position, p.jersey
+                    FROM PlayerGameLog pgl
+                    JOIN Player p ON pgl.playerId = p.id
+                    WHERE date(pgl.gameDate) = ${queryEtDate}
+                `;
+            }
+        }
+
+        if (playerOfToday.length === 0) {
+            return res.status(200).json({ mvp: null, message: "No player found" });
         }
         const mvpRaw = playerOfToday.reduce((prev, curr) => {
             const getScore = (p) => (p.pts || 0) + (p.ast || 0) * 1.2 + (p.reb || 0) + ((p.stl || 0) + (p.blk || 0)) * 2 - (p.tov || 0) * 1.5;
@@ -148,8 +171,8 @@ const mvpOfToday = async (req, res) => {
             id: mvpRaw.id,
             gameId: mvpRaw.gameId,
             // Return China date for UI while keeping ET date for debugging.
-            gameDate: cnToday,
-            gameDateEt: etDateStr,
+            gameDate: etGameDateToCnDate(queryEtDate) || cnToday,
+            gameDateEt: queryEtDate,
             matchup: mvpRaw.matchup,
             pts: mvpRaw.pts,
             reb: mvpRaw.reb,
