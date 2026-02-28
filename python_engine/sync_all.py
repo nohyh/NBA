@@ -42,8 +42,10 @@ def full_sync():
 def quick_sync():
     """快速同步（仅今日数据）"""
     scripts = [
+        'sync_games.py',           # 同步赛程与比分状态
         'sync_game_logs.py',       # 同步今日比赛球员数据
         'sync_quarter_scores.py',  # 同步单节比分
+        'sync_news.py',            # 同步新闻
     ]
     
     for script in scripts:
